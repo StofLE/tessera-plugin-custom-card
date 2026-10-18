@@ -423,13 +423,18 @@ class Drawing {
   }
   // The rings of a line are as large as its largest. Beside values a ring asks only for a ring around its number in the
   // bold face of names, so it never makes the values smaller: it grows into the room the tile has afterwards (ring_min_),
-  // and its number takes the largest face that ring holds (ring_face).
+  // at most half again as tall as the values' line, so on a large tile it stays in step with the words beside it (they
+  // have no face larger than DIGITS) and the room left goes between the lines; its number takes the largest face that
+  // ring holds (ring_face).
   int ring_dia(const Line &line, Font face) const {
     const bool beside = beside_values(line);
+    const int most = 3 * (words_row() + ui::line_height(face)) / 2;
     int dia = 0;
-    for (int i = line.first; i < line.first + line.count; ++i)
-      if (meter(parts_[i]))
-        dia = std::max(dia, beside ? std::max(ring_min_, natural_dia(parts_[i], Font::TITLE)) : ring_dia(parts_[i], face));
+    for (int i = line.first; i < line.first + line.count; ++i) {
+      if (!meter(parts_[i])) continue;
+      const int least = natural_dia(parts_[i], Font::TITLE);
+      dia = std::max(dia, beside ? std::max(least, std::min(ring_min_, most)) : ring_dia(parts_[i], face));
+    }
     return dia;
   }
   // The face of a ring's number beside values: the largest its ring holds, never larger than the values' own.

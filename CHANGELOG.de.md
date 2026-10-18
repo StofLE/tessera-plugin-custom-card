@@ -11,8 +11,9 @@
 - Eine dritte Option der Kachel im Inspector: **Werte in einer Reihe**, automatisch (wie bisher), alle in einer Reihe
   oder zwei pro Reihe (vier Werte auf einer breiten Kachel als eine Reihe mit vier oder zwei Reihen mit zwei).
 - Ein Ring, wo er auch steht: Ein Ring zwischen Werten (zwei Zählungen und ihr Anteil) ist derselbe Ring wie auf einer
-  Karte mit Ringen, sein Wert groß in der Mitte, sein Label in der Öffnung, und er wächst in den Platz der Kachel; die
-  Werte daneben stehen in der Mitte der Zeile. Der kleine Ring, so hoch wie die Zahlen der Werte, entfällt.
+  Karte mit Ringen, sein Wert groß in der Mitte, sein Label in der Öffnung, und er wächst in den Platz der Kachel,
+  höchstens anderthalbmal so hoch wie die Zeile der Werte, damit er auf großen Kacheln zu ihnen passt; die Werte daneben
+  stehen in der Mitte der Zeile. Der kleine Ring, so hoch wie die Zahlen der Werte, entfällt.
 - Ringe, die nur ohne den Namen der Kachel passen, weichen ihren Zahlen als Werte, wo diese ihn behalten: Eine 2x1-Kachel
   mit Ringen zeigt ihren Namen.
 
