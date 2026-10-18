@@ -551,10 +551,17 @@ class Drawing {
   // as two rows of two, where that gives them a larger face than one row of four).
   static constexpr int ARRANGEMENTS = 3;
   // With the tile's option (per_row_) only the arrangements of that many values to a row.
+  // Two to a row is never the layout's own choice for rings among values: it would part a share from its counts (two
+  // counts and their share stand together; the tile's option may still ask for it).
   void arrange() {
+    bool ring = false, value = false;
+    for (const Part &part : parts_) {
+      ring = ring || (part.kind == Kind::RING && rings_);
+      value = value || part.kind == Kind::VALUE || part.kind == Kind::BAR;
+    }
     arranged_[0] = per_row_ == 0 || per_row_ >= MAX_IN_ROW ? side_by_side() : Lines();
     arranged_[1] = stacked(per_row_ ? per_row_ : MAX_IN_ROW);
-    arranged_[2] = per_row_ == 0 ? stacked(2) : Lines();
+    arranged_[2] = per_row_ == 0 && !(ring && value) ? stacked(2) : Lines();
   }
   // What a search found: whether anything fits, the values' face, whether the name and the labels stand, whether texts
   // beside other parts stay whole, and which arrangement (an index of arranged_).

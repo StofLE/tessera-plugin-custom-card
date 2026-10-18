@@ -13,6 +13,8 @@
   its value large in its middle and its label in its opening, and it grows into the room the tile has, at most half
   again as tall as the values' line so it stays in step with them on a large tile, with the values in the middle of the
   line beside it. The small ring as tall as the values' numbers is gone.
+- A ring among values is never set apart on a row of its own: where a narrow tile has no room for it beside them, its
+  share stands as a value under the counts, which keep their large face.
 - Rings that fit only without the tile's name give way to their numbers as values where those keep it: a 2x1 of rings
   shows its name.
 

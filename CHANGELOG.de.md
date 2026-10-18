@@ -14,6 +14,8 @@
   Karte mit Ringen, sein Wert groß in der Mitte, sein Label in der Öffnung, und er wächst in den Platz der Kachel,
   höchstens anderthalbmal so hoch wie die Zeile der Werte, damit er auf großen Kacheln zu ihnen passt; die Werte daneben
   stehen in der Mitte der Zeile. Der kleine Ring, so hoch wie die Zahlen der Werte, entfällt.
+- Ein Ring zwischen Werten kommt nie allein in eine eigene Reihe: Wo eine schmale Kachel neben ihnen keinen Platz für ihn
+  hat, steht sein Anteil als Wert unter den Zählungen, die ihre große Schrift behalten.
 - Ringe, die nur ohne den Namen der Kachel passen, weichen ihren Zahlen als Werte, wo diese ihn behalten: Eine 2x1-Kachel
   mit Ringen zeigt ihren Namen.
 
