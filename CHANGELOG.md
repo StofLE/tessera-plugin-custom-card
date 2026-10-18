@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.1
+## 0.6.1 - 2026-10-18
 - Rings as large as the tile: on a card of rings they grow into the room the tile has (as tall as a wide tile one row
   high), all of one size, their values in the largest face the rings hold, and the label stands in the open bottom of
   its ring instead of under it.
@@ -9,6 +9,7 @@
   label, so each value has its column's whole width (four values in one row under the tile's name).
 - A third option of the tile in the inspector: **Values in a row**, automatic (as before), all in one row, or two to a
   row (four values on a wide tile as one row of four or two rows of two).
+- These four by Schumey (pull request #3), thank you.
 - One ring wherever it stands: a ring among values (two counts and their share) is the same ring as on a card of rings,
   its value large in its middle and its label in its opening, and it grows into the room the tile has, at most half
   again as tall as the values' line so it stays in step with them on a large tile, with the values in the middle of the

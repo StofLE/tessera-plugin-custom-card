@@ -1,6 +1,6 @@
 # Änderungen
 
-## 0.6.1
+## 0.6.1 - 2026-10-18
 - Ringe so groß wie die Kachel: Auf einer Karte mit Ringen wachsen sie in den Platz, den die Kachel hat (so hoch wie
   eine breite Kachel mit einer Reihe), alle gleich groß, ihre Werte in der größten Schrift, die die Ringe fassen, und
   das Label steht in der offenen Unterseite seines Rings statt darunter.
@@ -10,6 +10,7 @@
   seinem Label, so hat jeder Wert die ganze Breite seiner Spalte (vier Werte in einer Reihe unter dem Namen der Kachel).
 - Eine dritte Option der Kachel im Inspector: **Werte in einer Reihe**, automatisch (wie bisher), alle in einer Reihe
   oder zwei pro Reihe (vier Werte auf einer breiten Kachel als eine Reihe mit vier oder zwei Reihen mit zwei).
+- Diese vier von Schumey (Pull Request #3), danke.
 - Ein Ring, wo er auch steht: Ein Ring zwischen Werten (zwei Zählungen und ihr Anteil) ist derselbe Ring wie auf einer
   Karte mit Ringen, sein Wert groß in der Mitte, sein Label in der Öffnung, und er wächst in den Platz der Kachel,
   höchstens anderthalbmal so hoch wie die Zeile der Werte, damit er auf großen Kacheln zu ihnen passt; die Werte daneben
