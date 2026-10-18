@@ -146,8 +146,8 @@ template:
 
 ### Zählungen mit Anteil und Textzeile
 
-Zwei Zählungen, ihr Anteil als Balken und wann gezählt wurde. Mit `ring` statt `bar` steht der Anteil als kleiner Ring
-mit seiner Zahl innen neben den Zählungen.
+Zwei Zählungen, ihr Anteil als Balken und wann gezählt wurde. Mit `ring` statt `bar` steht der Anteil als Ring neben den
+Zählungen, seine Zahl groß darin, so groß, wie die Kachel Platz hat.
 
 ```yaml
 template:
@@ -179,7 +179,7 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
 | `bar` | Eine Zahl mit einem Balken darunter, vom kleinsten bis zum größten Wert (ohne Angabe 0 und 100). | `bar\|820\|ppm\|CO2\|yellow\|molecule-co2\|400\|2000` |
 | `text` | Eine Textzeile; eine lange nimmt zwei Zeilen, wo die Karte Platz hat. | `text\|Tür offen\|\|\|\|door-open` |
 | `row` | Eine Zeile einer Tabelle: das Label links, der Wert rechts. Aufeinanderfolgende Zeilen stehen als Tabelle. | `row\|20,8\|°C\|Küche` |
-| `ring` | Ein Ring, gefüllt vom kleinsten bis zum größten Wert (ohne Angabe 0 und 100), der Wert in seiner Mitte, Icon und Label darunter. Aufeinanderfolgende Ringe stehen nebeneinander, alle so groß wie der größte; auf einer Karte mit Werten steht ein Ring zwischen ihnen, so hoch wie ihr Label und ihre Zahl zusammen, seine Zahl innen und sein Label in seiner Öffnung; wo sie nicht passen, steht die Zahl als Wert. | `ring\|46\|%\|Feuchte\|green\|water-percent\|0\|100` |
+| `ring` | Ein Ring, gefüllt vom kleinsten bis zum größten Wert (ohne Angabe 0 und 100), der Wert in seiner Mitte, Icon und Label darunter. Aufeinanderfolgende Ringe stehen nebeneinander, alle so groß wie der größte; neben Werten ist es derselbe Ring, er steht zwischen ihnen und wächst in den Platz der Kachel; wo sie nicht passen, steht die Zahl als Wert. | `ring\|46\|%\|Feuchte\|green\|water-percent\|0\|100` |
 
 - **Farbe**: `red`, `orange`, `yellow`, `green`, `mint`, `blue`, `purple`, `pink` oder `gray`. Wie auf Tesseras eigenen
   Tiles markiert sie einen Teil: Sie färbt das Icon (einen Punkt, wo der Teil keins hat), den Balken, den Ring und ein

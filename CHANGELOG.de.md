@@ -10,9 +10,9 @@
   seinem Label, so hat jeder Wert die ganze Breite seiner Spalte (vier Werte in einer Reihe unter dem Namen der Kachel).
 - Eine dritte Option der Kachel im Inspector: **Werte in einer Reihe**, automatisch (wie bisher), alle in einer Reihe
   oder zwei pro Reihe (vier Werte auf einer breiten Kachel als eine Reihe mit vier oder zwei Reihen mit zwei).
-- Ein Ring zwischen Werten ist so hoch wie ihre Zeile, Label und Zahl zusammen, statt nur so hoch wie die Zahl: seine
-  Zahl innen in der größten Schrift, die passt, sein Label in seiner Öffnung, wie auf einer Karte mit Ringen (zwei
-  Zählungen und ihr Anteil).
+- Ein Ring, wo er auch steht: Ein Ring zwischen Werten (zwei Zählungen und ihr Anteil) ist derselbe Ring wie auf einer
+  Karte mit Ringen, sein Wert groß in der Mitte, sein Label in der Öffnung, und er wächst in den Platz der Kachel; die
+  Werte daneben stehen in der Mitte der Zeile. Der kleine Ring, so hoch wie die Zahlen der Werte, entfällt.
 - Ringe, die nur ohne den Namen der Kachel passen, weichen ihren Zahlen als Werte, wo diese ihn behalten: Eine 2x1-Kachel
   mit Ringen zeigt ihren Namen.
 

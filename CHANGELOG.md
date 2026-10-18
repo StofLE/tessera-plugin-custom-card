@@ -9,9 +9,9 @@
   label, so each value has its column's whole width (four values in one row under the tile's name).
 - A third option of the tile in the inspector: **Values in a row**, automatic (as before), all in one row, or two to a
   row (four values on a wide tile as one row of four or two rows of two).
-- A ring among values is as tall as their line, their label and number together, instead of as tall as the number
-  alone: its number inside in the largest face that fits, its label in its opening, as on a card of rings (two counts
-  and their share).
+- One ring wherever it stands: a ring among values (two counts and their share) is the same ring as on a card of rings,
+  its value large in its middle and its label in its opening, and it grows into the room the tile has, with the
+  values in the middle of the line beside it. The small ring as tall as the values' numbers is gone.
 - Rings that fit only without the tile's name give way to their numbers as values where those keep it: a 2x1 of rings
   shows its name.
 
