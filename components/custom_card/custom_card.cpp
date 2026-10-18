@@ -415,11 +415,30 @@ class Drawing {
     const int lh = ui::line_height(inner_face(face));
     return std::min(dia, std::max({3 * dia / 4, dia - row, (dia - lh) / 2 + lh}));
   }
+  // Whether a line has values beside its rings (two counts and their share).
+  bool beside_values(const Line &line) const {
+    for (int i = line.first; i < line.first + line.count; ++i)
+      if (parts_[i].kind != Kind::RING) return true;
+    return false;
+  }
+  // The rings of a line are as large as its largest. Beside values a ring asks only for a ring around its number in the
+  // bold face of names, so it never makes the values smaller: it grows into the room the tile has afterwards (ring_min_),
+  // and its number takes the largest face that ring holds (ring_face).
   int ring_dia(const Line &line, Font face) const {
+    const bool beside = beside_values(line);
     int dia = 0;
     for (int i = line.first; i < line.first + line.count; ++i)
-      if (meter(parts_[i])) dia = std::max(dia, ring_dia(parts_[i], face));
+      if (meter(parts_[i]))
+        dia = std::max(dia, beside ? std::max(ring_min_, natural_dia(parts_[i], Font::TITLE)) : ring_dia(parts_[i], face));
     return dia;
+  }
+  // The face of a ring's number beside values: the largest its ring holds, never larger than the values' own.
+  Font ring_face(const Part &part, int dia, Font face) const {
+    for (Font f : {Font::DIGITS, Font::VALUE, Font::HEADLINE, Font::TITLE, Font::BODY_LARGE}) {
+      if (rank(f) < rank(face) || (f == Font::DIGITS && !ui::covers(part.value, Font::DIGITS))) continue;
+      if (natural_dia(part, f) <= dia) return f;
+    }
+    return Font::BODY;
   }
   int bar_thickness() const { return ui::px(ui::large() ? 10 : 6); }
   int dot_size() const { return ui::px(ui::large() ? 12 : 8); }
@@ -797,7 +816,7 @@ class Drawing {
       share = std::min(1.0f, std::max(0.0f, (value - part.min) / (part.max - part.min)));
     lv_arc_set_value(s.arc, static_cast<int>(std::lround(share * 1000)));
     show(s.arc, true);
-    const Font inner = inner_face(face);
+    const Font inner = beside_values(line) ? ring_face(part, dia, face) : inner_face(face);
     const int vw = std::min(dia - 2 * thick, ui::text_width(part.value, inner) + unit_width(part));
     place_value(s, part, inner, cx - vw / 2, top + (dia - ui::line_height(inner)) / 2, vw);
     if (!words) return;
