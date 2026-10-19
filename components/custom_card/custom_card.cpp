@@ -538,9 +538,12 @@ class Drawing {
     const float w = static_cast<float>(ui::text_width(part.value, mark_face(part))) * h / mark_ink(part);
     return std::max(1, std::min(column, static_cast<int>(std::lround(w))));
   }
-  // The width a picture may take of its column: beside another part a column's gap less, so two numbers drawn to the
-  // edges of their pictures stand apart as far as the columns' words do.
-  int picture_room(const Line &line, int column) const { return line.count > 1 ? column - column_gap() : column; }
+  // The width a picture may take of its column: beside another part a twentieth of the drawing's width less (at least a
+  // column's gap), so two numbers drawn to the edges of their pictures stand apart in step with the tile, wide on a
+  // wide tile and never closer than the columns' words.
+  int picture_room(const Line &line, int column) const {
+    return line.count > 1 ? column - std::max(column_gap(), width_ / 20) : column;
+  }
   // How tall a picture may grow before it fills its column; any height for a picture that takes the column.
   static int picture_height(const Part &part, int column) {
     if (part.cover || !part.value[0]) return 1 << 20;
