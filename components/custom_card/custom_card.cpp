@@ -802,9 +802,8 @@ class Drawing {
     const int spare = std::max(0, height_ - y - content);
     const int n = (int) lines->size();
     const int cols = columns(*lines);
-    // The first line with pictures takes the room the tile has left, until its pictures fill their columns, and the
-    // lines stand a gap apart; what the pictures do not take is above and below them all. Without pictures the room
-    // goes between the lines.
+    // The first line with pictures takes the room the tile has left, until its pictures fill their columns; what they
+    // do not take goes between the lines, as on a card without pictures.
     const Line *growing = nullptr;
     int grow = 0;
     if (found)
@@ -820,8 +819,9 @@ class Drawing {
       const int room = std::max(0, spare - gap() * (n - 1));
       grow = std::max(0, std::min(room, most - ui::line_height(face)));
     }
-    const int between = n > 1 ? (growing ? gap() : std::max(gap(), spare / (n + 1))) : 0;
-    y += std::max(0, (spare - grow - between * (n - 1)) / 2);
+    const int left = spare - grow;
+    const int between = n > 1 ? std::max(gap(), left / (n + 1)) : 0;
+    y += std::max(0, (left - between * (n - 1)) / 2);
     // Where even the smallest face does not fit, the lines that fit whole, never one cut in half at the bottom.
     for (const Line &line : *lines) {
       const int extra = &line == growing ? grow : 0;
