@@ -538,6 +538,9 @@ class Drawing {
     const float w = static_cast<float>(ui::text_width(part.value, mark_face(part))) * h / mark_ink(part);
     return std::max(1, std::min(column, static_cast<int>(std::lround(w))));
   }
+  // The width a picture may take of its column: beside another part a column's gap less, so two numbers drawn to the
+  // edges of their pictures stand apart as far as the columns' words do.
+  int picture_room(const Line &line, int column) const { return line.count > 1 ? column - column_gap() : column; }
   // How tall a picture may grow before it fills its column; any height for a picture that takes the column.
   static int picture_height(const Part &part, int column) {
     if (part.cover || !part.value[0]) return 1 << 20;
@@ -810,7 +813,7 @@ class Drawing {
     if (growing) {
       int most = 1 << 20;
       for (int i = growing->first; i < growing->first + growing->count; ++i)
-        if (pictured(parts_[i])) most = std::min(most, picture_height(parts_[i], column_width(cols)));
+        if (pictured(parts_[i])) most = std::min(most, picture_height(parts_[i], picture_room(*growing, column_width(cols))));
       const int room = std::max(0, spare - gap() * (n - 1));
       grow = std::max(0, std::min(room, most - ui::line_height(face)));
     }
@@ -1016,7 +1019,7 @@ class Drawing {
       if (picture && s.picture) {
         // The picture where the number would stand, from its left: whole and on the card's colour (contain, a
         // number), or filling its place with a key's corners (cover, a photo).
-        lv_obj_set_size(s.picture, picture_width(part, picture, column - room), picture);
+        lv_obj_set_size(s.picture, picture_width(part, picture, picture_room(line, column) - room), picture);
         lv_obj_set_pos(s.picture, x + room, vy);
         lv_obj_set_style_radius(s.picture, part.cover ? ui::px(ui::large() ? 10 : 6) : 0, 0);
         ui::set_picture(s.picture, picture_url(part), part.cover ? tessera::Fit::COVER : tessera::Fit::CONTAIN);

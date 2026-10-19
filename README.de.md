@@ -167,6 +167,35 @@ template:
             ] }}
 ```
 
+### Zählungen größer als die Ziffern des Screens
+
+Dieselben Zählungen als Bilder: Ein `image`-Teil steht, wo sonst ein Wert stünde, und wächst in den Platz der Kachel,
+so sind zwei Zählungen auf einer breiten Kachel (3x2, 4x2) etwa doppelt so hoch wie die größten Ziffern des Screens.
+Das Bild muss jemand zeichnen: Hier holt es ein Template-Image von einem kleinen Dienst im Haus, der eine Zahl zeichnet
+([examples/value-image](examples/value-image)); jede Bild-Entität geht genauso. Die Zählung ist die Marke des Teils:
+Ändert sie sich, ist die Adresse des Bildes neu, und wo es keine Bilder gibt, steht sie als Wert.
+
+```yaml
+template:
+  - image:
+      - name: Zählung gescannt
+        default_entity_id: image.zaehlung_gescannt
+        verify_ssl: false
+        url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.einlass_gescannt') | int(0) }}"
+  - sensor:
+      - name: Einlass-Karte
+        state: "{{ states('sensor.einlass_gescannt') }}"
+        attributes:
+          elements: >
+            {% set s = states('sensor.einlass_gescannt') | int(0) %}
+            {% set v = states('sensor.einlass_gueltig') | int(0) %}
+            {{ [
+              'image|' ~ s ~ '|zaehlung_gescannt|Gescannt',
+              'value|' ~ v ~ '||Gültig',
+              'bar|' ~ ((100 * s / v) | round(0) | int if v else 0) ~ '|%|Anteil|blue||0|100'
+            ] }}
+```
+
 ## Die Teile
 
 Jeder Teil ist ein Text, seine Felder durch `|` getrennt in dieser Reihenfolge: Art, Wert, Einheit, Label, Farbe, Icon
@@ -180,6 +209,7 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
 | `text` | Eine Textzeile; eine lange nimmt zwei Zeilen, wo die Karte Platz hat. | `text\|Tür offen\|\|\|\|door-open` |
 | `row` | Eine Zeile einer Tabelle: das Label links, der Wert rechts. Aufeinanderfolgende Zeilen stehen als Tabelle. | `row\|20,8\|°C\|Küche` |
 | `ring` | Ein Ring, gefüllt vom kleinsten bis zum größten Wert (ohne Angabe 0 und 100), der Wert in seiner Mitte, Icon und Label darunter. Aufeinanderfolgende Ringe stehen nebeneinander, alle so groß wie der größte; neben Werten ist es derselbe Ring, er steht zwischen ihnen und wächst in den Platz der Kachel; wo sie nicht passen, steht die Zahl als Wert. | `ring\|46\|%\|Feuchte\|green\|water-percent\|0\|100` |
+| `image` | Ein Bild von Home Assistant, wo sonst ein Wert stünde, links unter seinem Label: Seine Felder sind Marke, Quelle, Label, Farbe, Icon und Fit. Die Quelle ist eine Bild-Entität ohne `image.` oder ein Pfad, der mit `/` beginnt; die Marke ändert sich mit dem Bild und steht als Wert, wo es keine Bilder gibt. `contain` (Standard) zeigt das ganze Bild, `cover` füllt seinen Platz. | `image\|5358\|zaehlung_gescannt\|Gescannt` |
 
 - **Farbe**: `red`, `orange`, `yellow`, `green`, `mint`, `blue`, `purple`, `pink` oder `gray`. Wie auf Tesseras eigenen
   Tiles markiert sie einen Teil: Sie färbt das Icon (einen Punkt, wo der Teil keins hat), den Balken, den Ring und ein
@@ -201,6 +231,10 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
   flachen Tile bleibt ganz, wo die Teile stattdessen untereinander stehen können.
 - Die Schrift eines Werts richtet sich nach seiner Form, nicht nach den Ziffern, so behält das Tile seine Größe, wenn
   sich ein Wert ändert.
+- Ein `image` zeigt sein Bild auf einem Tile eines Boards mit Speicher für Bilder (nicht CYD, Waveshare 3.5 Zoll und
+  Hosyond 4 Zoll); dort und auf der Karte, die ein Tippen öffnet, steht seine Marke als Wert. Tesseras App holt das Bild
+  mit ihrem eigenen Zugang, nur von Home Assistant, und fragt erneut, wenn sich die Marke ändert. Mehrere Bilder einer
+  Karte sind für den Screen ein Bild, das ganz neu kommt, wenn sich eines davon ändert.
 - Ist der Sensor eine Weile nicht verfügbar, behält das Tile ihn und zeigt seinen Zustand, bis `elements` wieder da ist.
 - Ein Plugin-Tile kann keine ganze Seite belegen; jede andere Größe des Rasters geht.
 - Die Hintergrundfarbe des Tiles stellst du im Editor ein, wie bei jedem Tile. Sein Inspector hat drei eigene

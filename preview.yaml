@@ -1,7 +1,8 @@
 # What tools/preview.py of the tessera-plugins repository shows (its docs/PREVIEW.md): a room's climate with icons,
 # colours and a bar, a computer's load as three rings (without its name, the values in their colours), two counts with a share, a card whose value is a word,
 # eight rooms in two rows of four, eight rooms as a table,
-# and four climate values on a wide tile (two rows of two). Never put a secret here.
+# four climate values on a wide tile (two rows of two), and two counts as pictures (image parts, the pictures from the
+# files under pictures:). Never put a secret here.
 tiles:
   - tile: card
     name: Computer
@@ -33,6 +34,10 @@ tiles:
     entity: sensor.climate_card
     options: { show_name: false, coloured_values: true, per_row: all }
     sizes: [2x1, 2x2]
+  - tile: card
+    name: Entrance large
+    entity: sensor.entrance_pictures
+    sizes: [2x2, 3x2, 4x2, 2x1]
 
 states:
   sensor.climate_card:
@@ -66,6 +71,14 @@ states:
         - "value|12.499||Valid"
         - "bar|70|%|Share|blue||0|100"
         - "row|15:25||Race day"
+  sensor.entrance_pictures:
+    state: "5358"
+    attributes:
+      elements:
+        - "image|5358|count_scanned|Scanned"
+        - "image|5933|count_valid|Valid"
+        - "bar|90|%|Share|blue||0|100"
+        - "row|21:00||Concert"
   sensor.front_door_card:
     state: "open"
     attributes:
@@ -100,3 +113,7 @@ states:
 
 cards:
   - { card: detail, entity: sensor.living_room_card }
+
+pictures:
+  "/api/image_proxy/image.count_scanned?v=5358": preview/count-5358.png
+  "/api/image_proxy/image.count_valid?v=5933": preview/count-5933.png
