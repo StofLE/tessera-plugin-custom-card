@@ -22,6 +22,13 @@ namespace ui = tessera::ui;
 //   text|<words>|||<colour>|<icon>
 //   row|<value>|<unit>|<label>|<colour>|<icon>
 //   ring|<value>|<unit>|<label>|<colour>|<icon>|<min>|<max>
+//   image|<mark>|<source>|<label>|<colour>|<icon>|<fit>
+//
+// An image is a picture where a value would stand (plugin API 0.10): <source> is an image entity without its "image."
+// (ztr_gescannt for /api/image_proxy/image.ztr_gescannt) or a picture of Home Assistant's own that starts with "/"
+// (/local/poster.jpg). <mark> changes with the picture, so the address changes too (?v=<mark>), and it is what the card
+// shows as a value where there are no pictures (a board without the memory for them, the card a tap opens). <fit> is
+// contain (the default: the whole picture, as a number drawn by a template) or cover (a photo that fills its place).
 //
 // An icon field that starts with "#" is a badge instead, as a line's number in the departures plugin: the words after
 // it in a box of the part's colour (the accent where it has none), e.g. row|4|min|Main station|blue|#16.
@@ -69,7 +76,10 @@ static uint32_t icon_colour(uint32_t colour) { return readable(theme::icon(colou
 static constexpr int MAX_PARTS = 8;
 static constexpr int MAX_IN_ROW = 4;
 
-enum class Kind : uint8_t { VALUE, BAR, TEXT, ROW, RING };
+enum class Kind : uint8_t { VALUE, BAR, TEXT, ROW, RING, IMAGE };
+
+// A value, or a picture that stands where a value would: both are laid out as values, side by side in their line.
+static bool valued(Kind kind) { return kind == Kind::VALUE || kind == Kind::IMAGE; }
 
 // Fixed fields, so the list of parts is one block in PSRAM (tessera::List, plugin API 0.10): Tessera cuts a part's
 // text at 48 bytes, so no field is longer.
@@ -81,7 +91,30 @@ struct Part {
   uint32_t icon = 0;    // a codepoint of Tessera's set, 0 for none
   char badge[9] = "";   // a badge's words ("16", "S3"), "" for none
   float min = 0, max = 100;
+  char source[49] = ""; // an image's picture: an image entity without "image.", or a path of Home Assistant's own
+  bool cover = false;   // an image fills its place (cover) instead of showing whole (contain)
 };
+
+// The address of an image's picture: Home Assistant's own, with its mark so a new picture is a new address (Tessera
+// asks again only for another address). The mark is percent-encoded where it is more than letters, digits and . - _ ~.
+static std::string picture_url(const Part &part) {
+  if (!part.source[0]) return "";
+  std::string url = part.source[0] == '/' ? std::string(part.source) : "/api/image_proxy/image." + std::string(part.source);
+  if (!part.value[0]) return url;
+  url += url.find('?') == std::string::npos ? "?v=" : "&v=";
+  static const char *HEX = "0123456789ABCDEF";
+  for (const char *c = part.value; *c; ++c) {
+    const unsigned char b = static_cast<unsigned char>(*c);
+    if (isalnum(b) || b == '.' || b == '-' || b == '_' || b == '~') {
+      url += static_cast<char>(b);
+    } else {
+      url += '%';
+      url += HEX[b >> 4];
+      url += HEX[b & 15];
+    }
+  }
+  return url;
+}
 
 template <size_t N> static void copy_to(char (&to)[N], const std::string &from) {
   const size_t n = std::min(from.size(), N - 1);
@@ -136,9 +169,16 @@ static bool parse(const std::string &line, Part *part) {
   else if (f[0] == "text") part->kind = Kind::TEXT;
   else if (f[0] == "row") part->kind = Kind::ROW;
   else if (f[0] == "ring") part->kind = Kind::RING;
+  else if (f[0] == "image") part->kind = Kind::IMAGE;
   else return false;
   copy_to(part->value, at(1));
-  copy_to(part->unit, at(2));
+  if (part->kind == Kind::IMAGE) {
+    // An image's third field is its picture, and the seventh how it fits; it has no unit and no range.
+    copy_to(part->source, at(2));
+    part->cover = at(6) == "cover";
+  } else {
+    copy_to(part->unit, at(2));
+  }
   copy_to(part->label, at(3));
   part->colour = theme::key_swatch(at(4));
   part->tone = tone_of(at(4));
@@ -166,9 +206,11 @@ class Drawing {
   // `titled`: the tile's name heads the parts (a card has its title in Tessera's frame instead, and a tile may turn it
   // off). `coloured`: a value takes its part's colour too, not only its mark. `per_row`: how many values stand in a
   // row, 0 for what makes them largest, MAX_IN_ROW for all in one row.
+  // `pictures`: images show their pictures (a tile on a board with the memory for them), else their marks as values.
   void create(lv_obj_t *parent, int width, int height, bool flat, const std::string &name, bool titled,
-              bool coloured, int per_row = 0) {
+              bool coloured, int per_row = 0, bool pictures = false) {
     per_row_ = per_row;
+    pictures_ = pictures;
     width_ = width;
     height_ = height;
     flat_ = flat;
@@ -200,6 +242,8 @@ class Drawing {
       s.unit = ui::label(parent, Font::BODY, theme::MUTED);
       s.track = ui::block(parent, theme::TRACK);
       s.fill = ui::block(s.track, theme::ACCENT);
+      // A place for an image's picture (plugin API 0.10); hidden, it asks for nothing.
+      if (pictures_) s.picture = ui::picture(parent);
     }
     hide_all();
   }
@@ -295,7 +339,7 @@ class Drawing {
 
  private:
   struct Slot {
-    lv_obj_t *icon{}, *dot{}, *label{}, *value{}, *unit{}, *track{}, *fill{}, *badge{}, *arc{};
+    lv_obj_t *icon{}, *dot{}, *label{}, *value{}, *unit{}, *track{}, *fill{}, *badge{}, *arc{}, *picture{};
   };
   // Parts side by side in columns, or a bar or a text alone across the width (`across`: its words left, its value
   // right, the bar under them).
@@ -306,6 +350,7 @@ class Drawing {
   using Lines = tessera::List<Line>;
 
   static void show(lv_obj_t *obj, bool shown) {
+    if (!obj) return;
     if (shown) lv_obj_remove_flag(obj, LV_OBJ_FLAG_HIDDEN);
     else lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
   }
@@ -314,7 +359,7 @@ class Drawing {
     show(head_, false);
     show(note_, false);
     for (Slot &s : slots_)
-      for (lv_obj_t *obj : {s.icon, s.dot, s.label, s.value, s.unit, s.track, s.badge, s.arc}) show(obj, false);
+      for (lv_obj_t *obj : {s.icon, s.dot, s.label, s.value, s.unit, s.track, s.badge, s.arc, s.picture}) show(obj, false);
   }
 
   // Stacked: values that follow each other side by side (at most `in_row`), a bar and a text alone across the width.
@@ -322,7 +367,7 @@ class Drawing {
     Lines out;
     for (int i = 0; i < (int) parts_.size(); ++i) {
       // Values and rings side by side (two counts and their share as a ring), a bar and a text alone across.
-      const bool value = parts_[i].kind == Kind::VALUE || parts_[i].kind == Kind::RING;
+      const bool value = valued(parts_[i].kind) || parts_[i].kind == Kind::RING;
       if (value && !out.empty() && !out.back().across && out.back().count < in_row)
         ++out.back().count;
       else
@@ -474,6 +519,32 @@ class Drawing {
     return !part.unit[0] ? 0 : ui::px(3) + ui::text_width(part.unit, Font::BODY);
   }
 
+  // An image shows its picture where the drawing has pictures and the image an address, else its mark as a value.
+  bool pictured(const Part &part) const { return pictures_ && part.kind == Kind::IMAGE && part.source[0]; }
+  bool has_picture(const Line &line) const {
+    if (line.across) return false;
+    for (int i = line.first; i < line.first + line.count; ++i)
+      if (pictured(parts_[i])) return true;
+    return false;
+  }
+  // A picture of a mark is a number a template drew tight around its ink, in a face like the screen's digits: its
+  // shape is the mark's in DIGITS (VALUE for a mark DIGITS lacks), the ink about 0.62 of the face's line high.
+  static Font mark_face(const Part &part) { return ui::covers(part.value, Font::DIGITS) ? Font::DIGITS : Font::VALUE; }
+  static float mark_ink(const Part &part) { return 0.62f * static_cast<float>(ui::line_height(mark_face(part))); }
+  // How wide a picture `h` high is, at most its column: a number as wide as its shape, so it stands at the left under
+  // its label; a picture without a mark, or one that fills its place (cover), takes the column.
+  static int picture_width(const Part &part, int h, int column) {
+    if (part.cover || !part.value[0]) return column;
+    const float w = static_cast<float>(ui::text_width(part.value, mark_face(part))) * h / mark_ink(part);
+    return std::max(1, std::min(column, static_cast<int>(std::lround(w))));
+  }
+  // How tall a picture may grow before it fills its column; any height for a picture that takes the column.
+  static int picture_height(const Part &part, int column) {
+    if (part.cover || !part.value[0]) return 1 << 20;
+    const int w = std::max(1, ui::text_width(part.value, mark_face(part)));
+    return static_cast<int>(column * mark_ink(part) / w);
+  }
+
   int line_height(const Line &line, Font face, bool labels) const {
     const Part &first = parts_[line.first];
     if (line.across)
@@ -484,6 +555,7 @@ class Drawing {
     for (int i = line.first; i < line.first + line.count; ++i) {
       switch (parts_[i].kind) {
         case Kind::VALUE:
+        case Kind::IMAGE:
         case Kind::ROW: h = std::max(h, words + ui::line_height(face)); break;
         case Kind::RING:
           // A ring keeps its icon and label under it whatever the labels of the values do: it has nowhere else to put a
@@ -557,7 +629,7 @@ class Drawing {
     bool ring = false, value = false;
     for (const Part &part : parts_) {
       ring = ring || (part.kind == Kind::RING && rings_);
-      value = value || part.kind == Kind::VALUE || part.kind == Kind::BAR;
+      value = value || valued(part.kind) || part.kind == Kind::BAR;
     }
     arranged_[0] = per_row_ == 0 || per_row_ >= MAX_IN_ROW ? side_by_side() : Lines();
     arranged_[1] = stacked(per_row_ ? per_row_ : MAX_IN_ROW);
@@ -637,7 +709,7 @@ class Drawing {
       if (part.kind != Kind::TEXT && part.label[0] && !(part.kind == Kind::RING ? part.icon != 0 : has_mark(part)))
         unmarked = true;
       if (part.kind == Kind::RING) rings = true;
-      if (part.kind == Kind::VALUE || part.kind == Kind::BAR) values = true;
+      if (valued(part.kind) || part.kind == Kind::BAR) values = true;
     }
     // Rings drawn as rings first. Where no arrangement takes them (a flat tile), or where they would make the card's
     // other values smaller than they are without them, their numbers stand as values.
@@ -723,14 +795,33 @@ class Drawing {
     for (const Line &line : *lines) content += line_height(line, face, chosen.labels);
     const int spare = std::max(0, height_ - y - content);
     const int n = (int) lines->size();
-    const int between = n > 1 ? std::max(gap(), spare / (n + 1)) : 0;
-    y += std::max(0, (spare - between * (n - 1)) / 2);
-    // Where even the smallest face does not fit, the lines that fit whole, never one cut in half at the bottom.
     const int cols = columns(*lines);
+    // The first line with pictures takes the room the tile has left, until its pictures fill their columns, and the
+    // lines stand a gap apart; what the pictures do not take is above and below them all. Without pictures the room
+    // goes between the lines.
+    const Line *growing = nullptr;
+    int grow = 0;
+    if (found)
+      for (const Line &line : *lines)
+        if (has_picture(line)) {
+          growing = &line;
+          break;
+        }
+    if (growing) {
+      int most = 1 << 20;
+      for (int i = growing->first; i < growing->first + growing->count; ++i)
+        if (pictured(parts_[i])) most = std::min(most, picture_height(parts_[i], column_width(cols)));
+      const int room = std::max(0, spare - gap() * (n - 1));
+      grow = std::max(0, std::min(room, most - ui::line_height(face)));
+    }
+    const int between = n > 1 ? (growing ? gap() : std::max(gap(), spare / (n + 1))) : 0;
+    y += std::max(0, (spare - grow - between * (n - 1)) / 2);
+    // Where even the smallest face does not fit, the lines that fit whole, never one cut in half at the bottom.
     for (const Line &line : *lines) {
-      const int h = line_height(line, face, chosen.labels);
+      const int extra = &line == growing ? grow : 0;
+      const int h = line_height(line, face, chosen.labels) + extra;
       if (!found && y + h > height_) break;
-      place(line, cols, face, chosen.labels, y);
+      place(line, cols, face, chosen.labels, y, extra);
       y += h + between;
     }
   }
@@ -864,8 +955,9 @@ class Drawing {
     show(s.fill, filled > 0);
   }
 
-  void place(const Line &line, int cols, Font face, bool labels, int y) {
-    const int h = line_height(line, face, labels);
+  // `extra`: the height a line of pictures has above its own (layout()), all of it for its pictures.
+  void place(const Line &line, int cols, Font face, bool labels, int y, int extra = 0) {
+    const int h = line_height(line, face, labels) + extra;
     if (line.across) {
       const Part &part = parts_[line.first];
       Slot &s = slots_[line.first];
@@ -908,7 +1000,8 @@ class Drawing {
         continue;
       }
       // Beside a ring taller than they are, the values stand in the middle of the line.
-      const int own = (words ? words_row() : 0) + ui::line_height(face) +
+      const int picture = pictured(part) ? ui::line_height(face) + extra : 0;
+      const int own = (words ? words_row() : 0) + (picture ? picture : ui::line_height(face)) +
                       (part.kind == Kind::BAR ? ui::px(4) + bar_thickness() : 0);
       const int top = y + std::max(0, (h - own) / 2);
       int vy = top;
@@ -920,6 +1013,16 @@ class Drawing {
         // No row for the words: the mark stands before the number, centred on it, and says what it is.
         room = place_mark(s, part, x, top, ui::line_height(face), inline_icon(face)) + ui::px(6);
       }
+      if (picture && s.picture) {
+        // The picture where the number would stand, from its left: whole and on the card's colour (contain, a
+        // number), or filling its place with a key's corners (cover, a photo).
+        lv_obj_set_size(s.picture, picture_width(part, picture, column - room), picture);
+        lv_obj_set_pos(s.picture, x + room, vy);
+        lv_obj_set_style_radius(s.picture, part.cover ? ui::px(ui::large() ? 10 : 6) : 0, 0);
+        ui::set_picture(s.picture, picture_url(part), part.cover ? tessera::Fit::COVER : tessera::Fit::CONTAIN);
+        show(s.picture, true);
+        continue;
+      }
       place_value(s, part, face, x + room, vy, column - room);
       if (part.kind == Kind::BAR) place_bar(s, part, x, vy + ui::line_height(face) + ui::px(4), column);
     }
@@ -927,7 +1030,7 @@ class Drawing {
 
   const tessera::Plugin *plugin_;
   int width_ = 0, height_ = 0;
-  bool flat_ = false, titled_ = true, coloured_ = false;
+  bool flat_ = false, titled_ = true, coloured_ = false, pictures_ = false;
   int per_row_ = 0;  // the tile's option: values to a row, 0 for the layout's choice
   // Kept in PSRAM (tessera::Text and tessera::List, plugin API 0.10): the memory inside the chip stays Wi-Fi's.
   tessera::Text name_, shown_name_, note_text_;
@@ -959,7 +1062,7 @@ class CardTile : public tessera::Tile {
     const std::string per_row = c.options["per_row"] | "auto";
     drawing_.create(c.parent, c.width, c.height, c.rows == 1 && c.columns >= 2, c.name ? c.name : "",
                     c.options["show_name"] | true, c.options["coloured_values"] | false,
-                    per_row == "all" ? MAX_IN_ROW : per_row == "two" ? 2 : 0);
+                    per_row == "all" ? MAX_IN_ROW : per_row == "two" ? 2 : 0, ui::pictures());
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }

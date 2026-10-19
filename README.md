@@ -164,6 +164,35 @@ template:
             ] }}
 ```
 
+### Counts larger than the screen's digits
+
+The same counts as pictures: an `image` part stands where a value would and grows into the room the tile has, so on a
+wide tile (3x2, 4x2) two counts are about twice as tall as the screen's largest digits. Something has to draw the
+picture: here a template image fetches it from a small service in the house that draws a number
+([examples/value-image](examples/value-image)); any image entity works the same way. The count is the part's mark: it
+makes the address new when it changes, and it stands as a value where there are no pictures.
+
+```yaml
+template:
+  - image:
+      - name: Count scanned
+        default_entity_id: image.count_scanned
+        verify_ssl: false
+        url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.entrance_scanned') | int(0) }}"
+  - sensor:
+      - name: Entrance card
+        state: "{{ states('sensor.entrance_scanned') }}"
+        attributes:
+          elements: >
+            {% set s = states('sensor.entrance_scanned') | int(0) %}
+            {% set v = states('sensor.entrance_valid') | int(0) %}
+            {{ [
+              'image|' ~ s ~ '|count_scanned|Scanned',
+              'value|' ~ v ~ '||Valid',
+              'bar|' ~ ((100 * s / v) | round(0) | int if v else 0) ~ '|%|Share|blue||0|100'
+            ] }}
+```
+
 ## The parts
 
 Each part is one text, its fields split by `|` in this order: kind, value, unit, label, colour, icon, and for a bar or
@@ -176,6 +205,7 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
 | `text` | A line of words; a long one takes two lines where the card has room. | `text\|Door open\|\|\|\|door-open` |
 | `row` | A row of a table: its label at the left, its value at the right. Rows that follow each other stand as a table. | `row\|20.8\|°C\|Kitchen` |
 | `ring` | A ring filled from its lowest to its highest value (0 and 100 when left out), the value in its middle, the icon and the label under it. Rings that follow each other stand side by side, all as large as the largest; beside values a ring is the same ring and stands among them, growing into the room the tile has; where they do not fit, the number stands as a value. | `ring\|46\|%\|Humidity\|green\|water-percent\|0\|100` |
+| `image` | A picture of Home Assistant's own where a value would stand, from the left under its label: its fields are the mark, the source, the label, the colour, the icon and the fit. The source is an image entity without `image.` or a path that starts with `/`; the mark changes with the picture and stands as a value where there are no pictures. `contain` (the default) shows the whole picture, `cover` fills its place. | `image\|5.358\|count_scanned\|Scanned` |
 
 - **Colour**: `red`, `orange`, `yellow`, `green`, `mint`, `blue`, `purple`, `pink` or `gray`. As on Tessera's own tiles
   it marks a part: it colours the icon (a dot where the part has none), the bar, the ring and a badge, and the words
@@ -196,6 +226,10 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
   no number is cut short and no line cut in half. A text beside other parts on a flat tile stays whole where the parts
   can stand under each other instead.
 - The face of a value is chosen for its shape, not its digits, so the tile keeps its size when a value ticks.
+- An `image` shows its picture on a tile of a board with the memory for pictures (not the CYD, the Waveshare 3.5-inch
+  or the Hosyond 4-inch); there, and on the card a tap opens, its mark stands as a value. Tessera's app fetches the
+  picture with its own access, only from Home Assistant, and asks again when the mark changes. Several images on a
+  card are one picture for the screen, sent again whole when one of them changes.
 - When the sensor is unavailable for a while, the tile keeps it and shows its state until `elements` is back.
 - A plugin tile cannot take a whole page; any other size of the grid is fine.
 - The tile's background colour is set in the editor, as for every tile. Its inspector has three options of its own:
