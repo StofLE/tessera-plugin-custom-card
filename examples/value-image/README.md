@@ -41,23 +41,23 @@ Let only Home Assistant reach the port (a firewall rule for its address).
 
 ## In Home Assistant
 
-A template image per number. Its `url` changes with the number, so Home Assistant fetches the new picture; a
-trigger every 10 seconds keeps a busy counter from asking for a picture at every single step.
+A template image per number, its `url` with the number in it, so Home Assistant fetches the new picture when the
+number changes:
 
 ```yaml
 template:
-  - triggers:
-      - trigger: time_pattern
-        seconds: "/10"
-      - trigger: homeassistant
-        event: start
-    image:
+  - image:
       - name: Count scanned
         unique_id: count_scanned
         default_entity_id: image.count_scanned
         verify_ssl: false
         url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.entrance_scanned') | int(0) }}"
 ```
+
+Give the image no trigger of its own: the picture and the card's mark have to change at the same moment. Tessera's
+app keeps a picture by its address, and the mark is in the address, so a mark that changes before its picture would
+keep the old picture under the new mark. To make a busy counter change less often, slow down what both read (the
+sensor, or the automation that writes it), never the image alone.
 
 In the card's sensor, the part names the image entity without `image.`, with the number as its mark:
 
