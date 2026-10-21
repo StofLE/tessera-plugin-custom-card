@@ -5,10 +5,11 @@
   larger than the screen's largest digits, an event's poster or a person's photo:
   `image|<mark>|<source>|<label>|<colour>|<icon>|<fit>`. The source is an image entity without its `image.`
   (`image|5.358|counter_scanned|Scanned`) or a path of Home Assistant's own (`/local/poster.jpg`); the mark changes
-  with the picture, and where there are no pictures (a board without the memory for them, the card a tap opens) the
-  card shows it as a value. Images stand side by side as values do, from the left under their labels, and take the
+  with the picture, and where there are no pictures (a board without the memory for them) the card shows it as a
+  value. The card a tap opens shows the pictures too, larger in its room. Images stand side by side as values do, from the left under their labels, and take the
   room the tile has left until they fill their columns. `contain` (the default) shows the whole picture on the card's
   colour, `cover` fills its place.
+- Needs Tessera 0.4.89 or later (plugin API 0.13, pictures on a card).
 
 ## 0.6.1 - 2026-10-18
 - Rings as large as the tile: on a card of rings they grow into the room the tile has (as tall as a wide tile one row

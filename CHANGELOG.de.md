@@ -5,10 +5,11 @@
   größer gezeichnet hat als die größten Ziffern des Screens, das Plakat einer Veranstaltung oder das Foto einer
   Person: `image|<Marke>|<Quelle>|<Label>|<Farbe>|<Icon>|<Fit>`. Die Quelle ist eine Bild-Entität ohne ihr `image.`
   (`image|5.358|zaehler_gescannt|Gescannt`) oder ein Pfad von Home Assistant (`/local/plakat.jpg`); die Marke ändert
-  sich mit dem Bild, und wo es keine Bilder gibt (ein Board ohne Speicher dafür, die Karte nach einem Tipp), zeigt die
-  Karte sie als Wert. Bilder stehen nebeneinander wie Werte, links unter ihren Labels, und nehmen den Platz, den die
+  sich mit dem Bild, und wo es keine Bilder gibt (ein Board ohne Speicher dafür), zeigt die Karte sie als Wert. Die
+  Karte nach einem Tipp zeigt die Bilder ebenfalls, größer in ihrem Platz. Bilder stehen nebeneinander wie Werte, links unter ihren Labels, und nehmen den Platz, den die
   Kachel übrig hat, bis sie ihre Spalten füllen. `contain` (Standard) zeigt das ganze Bild auf der Farbe der Karte,
   `cover` füllt seinen Platz.
+- Braucht Tessera 0.4.89 oder neuer (Plugin-API 0.13, Bilder auf einer Karte).
 
 ## 0.6.1 - 2026-10-18
 - Ringe so groß wie die Kachel: Auf einer Karte mit Ringen wachsen sie in den Platz, den die Kachel hat (so hoch wie

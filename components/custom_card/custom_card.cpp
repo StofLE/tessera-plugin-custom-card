@@ -27,7 +27,7 @@ namespace ui = tessera::ui;
 // An image is a picture where a value would stand (plugin API 0.10): <source> is an image entity without its "image."
 // (ztr_gescannt for /api/image_proxy/image.ztr_gescannt) or a picture of Home Assistant's own that starts with "/"
 // (/local/poster.jpg). <mark> changes with the picture, so the address changes too (?v=<mark>), and it is what the card
-// shows as a value where there are no pictures (a board without the memory for them, the card a tap opens). <fit> is
+// shows as a value where there are no pictures (a board without the memory for them). <fit> is
 // contain (the default: the whole picture, as a number drawn by a template) or cover (a photo that fills its place).
 //
 // An icon field that starts with "#" is a badge instead, as a line's number in the departures plugin: the words after
@@ -1088,7 +1088,8 @@ class DetailCard : public tessera::Card {
   explicit DetailCard(const tessera::Plugin *plugin) : drawing_(plugin) {}
 
   void open(const tessera::CardContext &c) override {
-    drawing_.create(c.parent, c.width, c.height, false, "", false, false);
+    // Its images as pictures too, on a board that shows pictures (plugin API 0.13, pictures on a card).
+    drawing_.create(c.parent, c.width, c.height, false, "", false, false, 0, ui::pictures());
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }
