@@ -185,7 +185,7 @@ picture: here a template image fetches it from a small service in the house that
 ([examples/value-image](examples/value-image)); any image entity works the same way. The count is the part's mark: it
 makes the address new when it changes, and it stands as a value where there are no pictures.
 
-![A count drawn as a picture on a 4x2 tile](docs/examples/counts-image.png)
+![Two counts drawn as pictures on a 4x2 tile](docs/examples/counts-image.png)
 
 ```yaml
 template:
@@ -194,6 +194,10 @@ template:
         default_entity_id: image.count_scanned
         verify_ssl: false
         url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.entrance_scanned') | int(0) }}"
+      - name: Count valid
+        default_entity_id: image.count_valid
+        verify_ssl: false
+        url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.entrance_valid') | int(0) }}"
   - sensor:
       - name: Entrance card
         state: "{{ states('sensor.entrance_scanned') }}"
@@ -203,7 +207,7 @@ template:
             {% set v = states('sensor.entrance_valid') | int(0) %}
             {{ [
               'image|' ~ s ~ '|count_scanned|Scanned',
-              'value|' ~ v ~ '||Valid',
+              'image|' ~ v ~ '|count_valid|Valid',
               'bar|' ~ ((100 * s / v) | round(0) | int if v else 0) ~ '|%|Share|blue||0|100'
             ] }}
 ```

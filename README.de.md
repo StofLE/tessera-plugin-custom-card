@@ -188,7 +188,7 @@ Das Bild muss jemand zeichnen: Hier holt es ein Template-Image von einem kleinen
 ([examples/value-image](examples/value-image)); jede Bild-Entität geht genauso. Die Zählung ist die Marke des Teils:
 Ändert sie sich, ist die Adresse des Bildes neu, und wo es keine Bilder gibt, steht sie als Wert.
 
-![Eine Zählung als Bild auf einer 4x2-Kachel](docs/examples/counts-image.png)
+![Zwei Zählungen als Bilder auf einer 4x2-Kachel](docs/examples/counts-image.png)
 
 ```yaml
 template:
@@ -197,6 +197,10 @@ template:
         default_entity_id: image.zaehlung_gescannt
         verify_ssl: false
         url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.einlass_gescannt') | int(0) }}"
+      - name: Zählung gültig
+        default_entity_id: image.zaehlung_gueltig
+        verify_ssl: false
+        url: "http://192.168.1.20:8765/value.png?ink=300&text={{ states('sensor.einlass_gueltig') | int(0) }}"
   - sensor:
       - name: Einlass-Karte
         state: "{{ states('sensor.einlass_gescannt') }}"
@@ -206,7 +210,7 @@ template:
             {% set v = states('sensor.einlass_gueltig') | int(0) %}
             {{ [
               'image|' ~ s ~ '|zaehlung_gescannt|Gescannt',
-              'value|' ~ v ~ '||Gültig',
+              'image|' ~ v ~ '|zaehlung_gueltig|Gültig',
               'bar|' ~ ((100 * s / v) | round(0) | int if v else 0) ~ '|%|Anteil|blue||0|100'
             ] }}
 ```
