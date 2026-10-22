@@ -9,6 +9,9 @@
   Karte nach einem Tipp zeigt die Bilder ebenfalls, größer in ihrem Platz. Bilder stehen nebeneinander wie Werte, links unter ihren Labels, und nehmen den Platz, den die
   Kachel übrig hat, bis sie ihre Spalten füllen. `contain` (Standard) zeigt das ganze Bild auf der Farbe der Karte,
   `cover` füllt seinen Platz.
+- Die README zeigt zu jedem Beispiel ein Bild auf einem Screen, so lässt sich jede Zeile eines Templates dem zuordnen,
+  was sie zeichnet (Issue #6), und sagt, dass die ganze Zeile eines Teils zu seinen 48 Bytes zählt, eine lange also
+  zuerst ihr Icon verliert.
 - Braucht Tessera 0.4.89 oder neuer (Plugin-API 0.13, Bilder auf einer Karte).
 
 ## 0.6.1 - 2026-10-18

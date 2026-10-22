@@ -25,11 +25,14 @@ Teile groß auf einer Karte über der Seite, mit ihren Labels.
 Kopiere eins, ersetze die Entity-IDs durch deine eigenen und lade die Template-Entitäten neu. Jedes gehört unter
 `template:` in der `configuration.yaml`.
 [examples/living_room.yaml](https://github.com/StofLE/tessera-plugin-custom-card/blob/main/examples/living_room.yaml)
-ist ein größeres Beispiel, mit Stufen für Feuchte und CO2.
+ist ein größeres Beispiel, mit Stufen für Feuchte und CO2. Jedes Bild zeigt sein Beispiel auf einem 7-Zoll-Screen,
+mit ausgedachten Werten.
 
 ### Das Raumklima eines Zimmers
 
 Werte mit Icons, die Farbe der Feuchte nach ihrer Stufe und das CO2 als Balken von 400 bis 2000 ppm.
+
+![Das Raumklima auf einer 2x2-Kachel](docs/examples/climate.png)
 
 ```yaml
 template:
@@ -53,6 +56,8 @@ template:
 
 Ringe nebeneinander, jeder gefüllt vom kleinsten bis zum größten Wert, sein Wert groß in seiner Mitte.
 
+![Drei Ringe auf einer 2x2-Kachel](docs/examples/rings.png)
+
 ```yaml
 template:
   - sensor:
@@ -73,6 +78,8 @@ template:
 ### Eine Tabelle der Räume
 
 Aufeinanderfolgende Zeilen stehen als Tabelle: die Namen links, die Werte rechts in einer Spalte.
+
+![Eine Tabelle mit fünf Räumen](docs/examples/rooms.png)
 
 ```yaml
 template:
@@ -100,6 +107,8 @@ template:
 
 Jeder Akku-Sensor im Haus, der schwächste zuerst, rot unter 20 %, gelb unter 50 %. Home Assistant rendert ein Template,
 das alle Sensoren durchgeht, höchstens einmal pro Minute; für Akkus reicht das völlig.
+
+![Vier Akkus, der schwächste zuerst](docs/examples/batteries.png)
 
 ```yaml
 template:
@@ -129,6 +138,8 @@ Ein Kästchen (ein Icon-Feld, das mit `#` beginnt) zeigt die Nummer einer Linie,
 Liste kommt, hängt von deiner Integration ab; hier ist es ein Attribut `departures` mit `line`, `destination` und
 `minutes` je Abfahrt. Ersetze diese Namen durch die deines Sensors.
 
+![Vier Abfahrten mit Linien-Badges](docs/examples/departures.png)
+
 ```yaml
 template:
   - sensor:
@@ -148,6 +159,8 @@ template:
 
 Zwei Zählungen, ihr Anteil als Balken und wann gezählt wurde. Mit `ring` statt `bar` steht der Anteil als Ring neben den
 Zählungen, seine Zahl groß darin, so groß, wie die Kachel Platz hat.
+
+![Zwei Zählungen, ein Balken und eine Textzeile](docs/examples/counts.png)
 
 ```yaml
 template:
@@ -174,6 +187,8 @@ so sind zwei Zählungen auf einer breiten Kachel (3x2, 4x2) etwa doppelt so hoch
 Das Bild muss jemand zeichnen: Hier holt es ein Template-Image von einem kleinen Dienst im Haus, der eine Zahl zeichnet
 ([examples/value-image](examples/value-image)); jede Bild-Entität geht genauso. Die Zählung ist die Marke des Teils:
 Ändert sie sich, ist die Adresse des Bildes neu, und wo es keine Bilder gibt, steht sie als Wert.
+
+![Eine Zählung als Bild auf einer 4x2-Kachel](docs/examples/counts-image.png)
 
 ```yaml
 template:
@@ -225,7 +240,9 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
 - Home Assistant rendert das Template; das Tile ändert sich, sobald sich der Sensor ändert. Stufen und Farben berechnest
   du im Template, dort rundest du die Werte und wählst das Dezimalzeichen.
 - Höchstens acht Teile (zwei Reihen mit vier Werten), jeder höchstens 48 Bytes: Tessera kürzt längere Texte, also Labels
-  kurz halten (die Beispiele kürzen Namen mit `[:18]`).
+  kurz halten (die Beispiele kürzen Namen mit `[:18]`). Es zählt die ganze Zeile mit jedem `|`, ein Umlaut zählt doppelt.
+  Das Icon steht am Ende und geht deshalb als Erstes verloren: `value|Zu||Untergeschoss|green|window-closed-variant`
+  (51 Bytes) zeigt einen Punkt statt des Icons, `value|Zu||UG|green|window-closed-variant` (40 Bytes) das Icon.
 - Ist ein Tile zu klein für alle Teile, stehen die Werte zu zweit oder einzeln in einer Reihe, und es erscheinen die
   Zeilen, die ganz passen: keine Zahl wird abgeschnitten, keine Zeile halbiert. Ein Text neben anderen Teilen auf einem
   flachen Tile bleibt ganz, wo die Teile stattdessen untereinander stehen können.

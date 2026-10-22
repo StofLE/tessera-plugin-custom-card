@@ -22,11 +22,14 @@ room as well. A tap opens the parts large on a card over the page, with their la
 Copy one, change the entity ids to your own, and reload Template entities. Each goes under `template:` in
 `configuration.yaml`.
 [examples/living_room.yaml](https://github.com/StofLE/tessera-plugin-custom-card/blob/main/examples/living_room.yaml)
-is a larger one, with levels for the humidity and the CO2.
+is a larger one, with levels for the humidity and the CO2. Each picture shows its example on a 7-inch screen, with
+made-up values.
 
 ### A room's climate
 
 Values with icons, the humidity's colour by its level, and the CO2 as a bar from 400 to 2000 ppm.
+
+![A room's climate on a 2x2 tile](docs/examples/climate.png)
 
 ```yaml
 template:
@@ -50,6 +53,8 @@ template:
 
 Rings side by side, each filled from its lowest to its highest value, its value large in its middle.
 
+![Three rings on a 2x2 tile](docs/examples/rings.png)
+
 ```yaml
 template:
   - sensor:
@@ -70,6 +75,8 @@ template:
 ### A table of rooms
 
 Rows that follow each other stand as a table: the names at the left, the values in one column at the right.
+
+![A table of five rooms](docs/examples/rooms.png)
 
 ```yaml
 template:
@@ -97,6 +104,8 @@ template:
 
 Every battery sensor of the house, the lowest first, red under 20 %, yellow under 50 %. Home Assistant renders a
 template that walks all sensors at most once a minute, which is plenty for batteries.
+
+![Four batteries, the lowest first](docs/examples/batteries.png)
 
 ```yaml
 template:
@@ -126,6 +135,8 @@ A badge (an icon field that starts with `#`) shows a line's number in a box, as 
 comes from depends on your integration; here it is an attribute `departures` with `line`, `destination` and `minutes`
 for each, so change those names to what your sensor has.
 
+![Four departures with line badges](docs/examples/departures.png)
+
 ```yaml
 template:
   - sensor:
@@ -145,6 +156,8 @@ template:
 
 Two counts, their share as a bar, and when they were counted. With `ring` instead of `bar` the share stands beside the
 counts as a ring with its number large inside, as large as the tile has room for.
+
+![Two counts, a bar and a line of words](docs/examples/counts.png)
 
 ```yaml
 template:
@@ -171,6 +184,8 @@ wide tile (3x2, 4x2) two counts are about twice as tall as the screen's largest 
 picture: here a template image fetches it from a small service in the house that draws a number
 ([examples/value-image](examples/value-image)); any image entity works the same way. The count is the part's mark: it
 makes the address new when it changes, and it stands as a value where there are no pictures.
+
+![A count drawn as a picture on a 4x2 tile](docs/examples/counts-image.png)
 
 ```yaml
 template:
@@ -221,7 +236,9 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
 - Home Assistant renders the template; the tile changes whenever the sensor does. Work out levels and colours in the
   template, round values there, and write the decimal sign you want.
 - At most eight parts (two rows of four values), each at most 48 bytes: Tessera cuts longer texts, so keep labels short
-  (the examples cut names with `[:18]`).
+  (the examples cut names with `[:18]`). The whole line counts, every `|` with it, and an umlaut counts twice. The icon
+  comes last, so it is the first to go: `value|Closed||Basement|green|window-closed-variant` (50 bytes) shows a dot
+  instead of its icon, `value|Closed||Base|green|window-closed-variant` (46 bytes) shows the icon.
 - Where a tile is too small for every part, the values stand two to a row, or one, and the lines that fit whole show:
   no number is cut short and no line cut in half. A text beside other parts on a flat tile stays whole where the parts
   can stand under each other instead.

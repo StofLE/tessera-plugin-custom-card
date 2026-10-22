@@ -9,6 +9,8 @@
   value. The card a tap opens shows the pictures too, larger in its room. Images stand side by side as values do, from the left under their labels, and take the
   room the tile has left until they fill their columns. `contain` (the default) shows the whole picture on the card's
   colour, `cover` fills its place.
+- The README shows a picture of every example on a screen, so each line of a template can be matched to what it draws
+  (issue #6), and says that a part's whole line counts towards its 48 bytes, so a long one loses its icon first.
 - Needs Tessera 0.4.89 or later (plugin API 0.13, pictures on a card).
 
 ## 0.6.1 - 2026-10-18
