@@ -1,14 +1,14 @@
 # Änderungen
 
-## 0.7.0
+## 0.7.0 - 2026-10-23
 - Ein neuer Teil, `image`: ein Bild von Home Assistant, wo sonst ein Wert stünde, etwa eine Zählung, die ein Template
-  größer gezeichnet hat als die größten Ziffern des Screens, das Plakat einer Veranstaltung oder das Foto einer
-  Person: `image|<Marke>|<Quelle>|<Label>|<Farbe>|<Icon>|<Fit>`. Die Quelle ist eine Bild-Entität ohne ihr `image.`
+  größer gezeichnet hat als die größten Ziffern des Screens, das Plakat einer Veranstaltung oder das Foto einer Person:
+  `image|<Marke>|<Quelle>|<Label>|<Farbe>|<Icon>|<Fit>`. Die Quelle ist eine Bild-Entität ohne ihr `image.`
   (`image|5.358|zaehler_gescannt|Gescannt`) oder ein Pfad von Home Assistant (`/local/plakat.jpg`); die Marke ändert
   sich mit dem Bild, und wo es keine Bilder gibt (ein Board ohne Speicher dafür), zeigt die Karte sie als Wert. Die
-  Karte nach einem Tipp zeigt die Bilder ebenfalls, größer in ihrem Platz. Bilder stehen nebeneinander wie Werte, links unter ihren Labels, und nehmen den Platz, den die
-  Kachel übrig hat, bis sie ihre Spalten füllen. `contain` (Standard) zeigt das ganze Bild auf der Farbe der Karte,
-  `cover` füllt seinen Platz.
+  Karte nach einem Tipp zeigt die Bilder ebenfalls, größer in ihrem Platz. Bilder stehen nebeneinander wie Werte, links
+  unter ihren Labels, und nehmen den Platz, den die Kachel übrig hat, bis sie ihre Spalten füllen. `contain` (Standard)
+  zeigt das ganze Bild auf der Farbe der Karte, `cover` füllt seinen Platz.
 - Die README zeigt zu jedem Beispiel ein Bild auf einem Screen, so lässt sich jede Zeile eines Templates dem zuordnen,
   was sie zeichnet (Issue #6), und sagt, dass die ganze Zeile eines Teils zu seinen 48 Bytes zählt, eine lange also
   zuerst ihr Icon verliert.
