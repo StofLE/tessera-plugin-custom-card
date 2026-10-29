@@ -14,9 +14,9 @@ room as well. A tap opens the parts large on a card over the page, with their la
 1. In Tessera, open **Plugins**, choose **Custom card** and tick your screens. Each screen builds once.
 2. In Layout, place the **Custom card** tile from the library's Plugins group and leave its entity empty.
 3. Pick up to six sensors under **Value 1** to **Value 6** in its inspector. Each shows its value, its unit, its name
-   and its icon (its own from Home Assistant, else one for its kind: temperature, humidity, CO2, power, a battery and
-   more). When the names start with the same words ("Living room Temperature", "Living room Humidity"), those words head
-   the card and the labels keep the rest. **Traffic lights** colours CO2, humidity and batteries green, yellow or red.
+   and its icon (its own from Home Assistant, else one for its kind or its unit: temperature, humidity, CO2, power, a
+   battery and more). A word all the names share ("Living room" of "Living room Temperature" and "Humidity living
+   room") heads the card, and the labels keep the rest. **Traffic lights** colours CO2, humidity and batteries green, yellow or red.
 
 Choosing other sensors needs no new build. For rings, bars, tables, colours of your own and pictures, use a template
 (below): a tile whose entity is a template sensor with `elements` shows its template and leaves the six values out.

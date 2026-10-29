@@ -3,7 +3,8 @@
 ## 0.8.0
 - Eine Karte ohne Template: Wähle im Inspector der Kachel unter Wert 1 bis Wert 6 bis zu sechs Sensoren (Plugin-API
   0.15). Jeder zeigt seinen Wert mit Einheit, seinen Namen und sein Icon, sein eigenes oder eines für seine Art von
-  Sensor. Die Wörter, mit denen alle Namen beginnen, stehen über der Karte, die Labels behalten den Rest. Eine Zahl mit
+  Sensor (seine Geräteklasse, bei einem Sensor ohne sie seine Einheit, ppm als CO2). Die Wörter, die in allen Namen
+  stehen, stehen über der Karte, egal an welcher Stelle, die Labels behalten den Rest. Eine Zahl mit
   mehr als einer Nachkommastelle zeigt eine (ab 100 keine), mit dem Dezimalzeichen des Screens. Die Option Ampelfarben
   färbt CO2 (bis 1000 ppm grün, bis 1400 gelb), Feuchte (40 bis 60 % grün, 30 bis 70 % gelb) und Akkus (über 50 % grün,
   über 20 % gelb), darüber hinaus rot. Andere Sensoren brauchen keinen neuen Build. Ein Tile, dessen Entität ein

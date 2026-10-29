@@ -7,7 +7,8 @@
     "wrong_entity": "Sensor wählen",
     "waiting": "Warte auf Home Assistant",
     "no_elements": "Nichts anzuzeigen",
-    "decimal_mark": ","
+    "decimal_mark": ",",
+    "tile_name": "Eigene Karte"
   },
   "app": {
     "name": "Eigene Karte",

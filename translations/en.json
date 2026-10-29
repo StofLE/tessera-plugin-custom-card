@@ -7,7 +7,8 @@
     "wrong_entity": "Choose a sensor",
     "waiting": "Waiting for Home Assistant",
     "no_elements": "No part to show",
-    "decimal_mark": "."
+    "decimal_mark": ".",
+    "tile_name": "Custom card"
   },
   "app": {
     "name": "Custom card",

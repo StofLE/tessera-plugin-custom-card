@@ -187,6 +187,19 @@ static uint32_t icon_of_class(const std::string &kind) {
   return 0;
 }
 
+// A sensor's kind: its device_class, or for a sensor without one (a KNX or Modbus sensor) the kind its unit says.
+static std::string kind_of(const std::string &device_class, const std::string &unit) {
+  if (!device_class.empty()) return device_class;
+  static const char *const BY_UNIT[][2] = {
+      {"ppm", "carbon_dioxide"}, {"°C", "temperature"}, {"°F", "temperature"}, {"W", "power"},  {"kW", "power"},
+      {"Wh", "energy"},          {"kWh", "energy"},     {"lx", "illuminance"},  {"hPa", "pressure"}, {"mbar", "pressure"},
+      {"V", "voltage"},          {"A", "current"},      {"µg/m³", "pm25"},
+  };
+  for (const auto &pair : BY_UNIT)
+    if (unit == pair[0]) return pair[1];
+  return "";
+}
+
 // Good, fair or poor for a sensor's kind (the option traffic_lights): carbon dioxide up to 1000 ppm good and up to
 // 1400 fair, humidity from 40 to 60 % good and from 30 to 70 % fair, a battery over 50 % good and over 20 % fair.
 // NORMAL for any other kind, and for a state that is no number.
@@ -216,21 +229,46 @@ static std::string value_of(const std::string &state, const std::string &mark) {
   return text;
 }
 
-// The words every name of `names` starts with (whole words, and never all of a name), "" where they share none.
-static std::string common_words(const std::vector<std::string> &names) {
-  if (names.size() < 2) return "";
-  std::string common = names[0];
-  for (const std::string &name : names) {
-    size_t n = 0;
-    while (n < common.size() && n < name.size() && common[n] == name[n]) ++n;
-    common.resize(n);
+static std::vector<std::string> words_of(const std::string &text) {
+  std::vector<std::string> out;
+  size_t start = 0;
+  while (start < text.size()) {
+    const size_t space = text.find(' ', start);
+    const size_t end = space == std::string::npos ? text.size() : space;
+    if (end > start) out.push_back(text.substr(start, end - start));
+    start = end + 1;
   }
-  const size_t space = common.rfind(' ');
-  if (space == std::string::npos) return "";
-  common.resize(space);
+  return out;
+}
+static std::string joined(const std::vector<std::string> &words) {
+  std::string out;
+  for (const std::string &word : words) out += (out.empty() ? "" : " ") + word;
+  return out;
+}
+
+// The words that stand in every name of `names`, wherever they stand ("Wohnzimmer" of "Temperatur Wohnzimmer" and
+// "Wohnzimmer CO2"), in the order of the first name; none where a name would be left without a word of its own.
+static std::vector<std::string> common_words(const std::vector<std::string> &names) {
+  if (names.size() < 2) return {};
+  std::vector<std::string> common;
+  for (const std::string &word : words_of(names[0])) {
+    bool everywhere = true;
+    for (const std::string &name : names) {
+      const std::vector<std::string> own = words_of(name);
+      everywhere = everywhere && std::find(own.begin(), own.end(), word) != own.end();
+    }
+    if (everywhere && std::find(common.begin(), common.end(), word) == common.end()) common.push_back(word);
+  }
   for (const std::string &name : names)
-    if (name.size() <= common.size() + 1 || name[common.size()] != ' ') return "";
-  return trim(common);
+    if (words_of(name).size() <= common.size()) return {};
+  return common;
+}
+// A name without the words all names share.
+static std::string without(const std::string &name, const std::vector<std::string> &common) {
+  std::vector<std::string> left;
+  for (const std::string &word : words_of(name))
+    if (std::find(common.begin(), common.end(), word) == common.end()) left.push_back(word);
+  return joined(left);
 }
 
 static bool parse(const std::string &line, Part *part) {
@@ -383,16 +421,20 @@ class Drawing {
     for (const Sensor &sensor : sensors) names.push_back(sensor.name);
     // One sensor alone keeps its name over its value, as before the simple mode.
     const bool alone = sensors.size() == 1;
-    const std::string common = common_words(names);
-    if (titled_ && name_.empty()) shown_name_ = roomy::text(alone ? sensors[0].name : common);
+    const std::vector<std::string> common = common_words(names);
+    // A tile without a sensor of its own carries the plugin's name (the app's "Custom card"): that heads no card.
+    std::string own = roomy::plain(name_);
+    if (state.empty() && (own == "Custom card" || own == std::string(plugin_->text("tile_name")))) own.clear();
+    if (titled_) shown_name_ = roomy::text(!own.empty() ? own : alone ? sensors[0].name : joined(common));
     const std::string mark = plugin_->text("decimal_mark");
     for (const Sensor &sensor : sensors) {
       if (parts_.size() >= MAX_PARTS) break;
       Part part;
-      const std::string kind = sensor.attributes["device_class"] | "";
+      const std::string unit = sensor.attributes["unit_of_measurement"] | "";
+      const std::string kind = kind_of(sensor.attributes["device_class"] | "", unit);
       copy_to(part.value, value_of(sensor.state, mark));
-      copy_to(part.unit, std::string(sensor.attributes["unit_of_measurement"] | ""));
-      if (!alone) copy_to(part.label, common.empty() ? sensor.name : trim(sensor.name.substr(common.size())));
+      copy_to(part.unit, unit);
+      if (!alone) copy_to(part.label, without(sensor.name, common));
       part.icon = icon_of(sensor.attributes["icon"] | "");
       if (!part.icon) part.icon = icon_of_class(kind);
       if (traffic_) part.tone = traffic_of(kind, sensor.state);

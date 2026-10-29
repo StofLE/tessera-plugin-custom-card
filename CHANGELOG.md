@@ -2,8 +2,9 @@
 
 ## 0.8.0
 - A card without a template: pick up to six sensors under Value 1 to Value 6 in the tile's inspector (plugin API
-  0.15). Each shows its value with its unit, its name and its icon, its own or one for its kind of sensor. The words all
-  their names start with head the card, and the labels keep the rest. A number with more than one decimal shows one
+  0.15). Each shows its value with its unit, its name and its icon, its own or one for its kind of sensor (its device
+  class, or its unit for a sensor without one, ppm as CO2). The words all their names share head the card, wherever they
+  stand, and the labels keep the rest. A number with more than one decimal shows one
   (none from 100 on), with the screen's decimal mark. The option Traffic lights colours CO2 (up to 1000 ppm green, up to
   1400 yellow), humidity (40 to 60 % green, 30 to 70 % yellow) and batteries (over 50 % green, over 20 % yellow) and
   red beyond. Other sensors need no new build. A tile whose entity is a template sensor with `elements` keeps its

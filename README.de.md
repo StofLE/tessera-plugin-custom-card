@@ -17,8 +17,8 @@ Teile groß auf einer Karte über der Seite, mit ihren Labels.
 2. Platziere im Layout das Tile **Eigene Karte** aus der Gruppe Plugins der Bibliothek und lass seine Entität leer.
 3. Wähle im Inspector unter **Wert 1** bis **Wert 6** bis zu sechs Sensoren. Jeder zeigt seinen Wert, seine Einheit,
    seinen Namen und sein Icon (sein eigenes aus Home Assistant, sonst eines für seine Art: Temperatur, Feuchte, CO2,
-   Leistung, Akku und mehr). Beginnen die Namen mit denselben Wörtern („Wohnzimmer Temperatur“, „Wohnzimmer Feuchte“),
-   stehen diese über der Karte und die Labels behalten den Rest. **Ampelfarben** färbt CO2, Feuchte und Akkus grün,
+   Leistung, Akku und mehr, auch an der Einheit erkannt). Ein Wort, das in allen Namen steht („Wohnzimmer“ in
+   „Temperatur Wohnzimmer“ und „Wohnzimmer CO2“), steht über der Karte, und die Labels behalten den Rest. **Ampelfarben** färbt CO2, Feuchte und Akkus grün,
    gelb oder rot.
 
 Andere Sensoren zu wählen braucht keinen neuen Build. Für Ringe, Balken, Tabellen, eigene Farben und Bilder nimm ein
