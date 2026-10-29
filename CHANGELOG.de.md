@@ -1,5 +1,11 @@
 # Änderungen
 
+## 0.8.0
+- Ein Bild, das nicht kommt (Home Assistant hat unter der Adresse keins, oder der Download brach ab), zeigt seine Marke
+  als Wert statt eines leeren grauen Blocks, bis sich die Marke ändert oder das Bild doch noch kommt (Plugin-API 0.17,
+  on_picture). Gesehen, als der Dienst, der eine Zählung zeichnet, eine Weile nicht erreichbar war.
+- Braucht das Tessera-Release nach 0.4.90 (Plugin-API 0.17).
+
 ## 0.7.0 - 2026-10-23
 - Ein neuer Teil, `image`: ein Bild von Home Assistant, wo sonst ein Wert stünde, etwa eine Zählung, die ein Template
   größer gezeichnet hat als die größten Ziffern des Screens, das Plakat einer Veranstaltung oder das Foto einer Person:

@@ -27,7 +27,8 @@ namespace ui = tessera::ui;
 // An image is a picture where a value would stand (plugin API 0.10): <source> is an image entity without its "image."
 // (ztr_gescannt for /api/image_proxy/image.ztr_gescannt) or a picture of Home Assistant's own that starts with "/"
 // (/local/poster.jpg). <mark> changes with the picture, so the address changes too (?v=<mark>), and it is what the card
-// shows as a value where there are no pictures (a board without the memory for them). <fit> is
+// shows as a value where there are no pictures (a board without the memory for them) and where its picture does not
+// come (plugin API 0.17, on_picture: the app has none at that address, or the download broke off). <fit> is
 // contain (the default: the whole picture, as a number drawn by a template) or cover (a photo that fills its place).
 //
 // An icon field that starts with "#" is a badge instead, as a line's number in the departures plugin: the words after
@@ -285,8 +286,27 @@ class Drawing {
       copy_to(part.unit, std::string(data["attributes"]["unit_of_measurement"] | ""));
       parts_.push_back(part);
     }
+    // A picture that did not come stays a value until its part has another address (a new mark) or it comes after all.
+    for (size_t i = 0; i < MAX_PARTS; ++i)
+      if (i >= parts_.size() || roomy::plain(failed_[i]) != picture_url(parts_[i])) failed_[i].clear();
     layout();
     paint();
+  }
+
+  // What came of a place's picture (plugin API 0.17): where it stays away (NONE, FAILED) its part shows its mark as a
+  // value instead of an empty block, until it comes or its part has another address.
+  void picture_came(lv_obj_t *place, tessera::PictureState state) {
+    for (size_t i = 0; i < MAX_PARTS && i < parts_.size(); ++i) {
+      if (slots_[i].picture != place) continue;
+      const std::string url = picture_url(parts_[i]);
+      const bool away = state != tessera::PictureState::SHOWN;
+      if (away == (roomy::plain(failed_[i]) == url)) return;
+      if (away) failed_[i] = roomy::text(url);
+      else failed_[i].clear();
+      layout();
+      paint();
+      return;
+    }
   }
 
   // The colours: words and numbers follow the look; a part's own colour paints its mark, its bar and its ring, and with
@@ -520,7 +540,11 @@ class Drawing {
   }
 
   // An image shows its picture where the drawing has pictures and the image an address, else its mark as a value.
-  bool pictured(const Part &part) const { return pictures_ && part.kind == Kind::IMAGE && part.source[0]; }
+  bool pictured(const Part &part) const {
+    if (!pictures_ || part.kind != Kind::IMAGE || !part.source[0]) return false;
+    const size_t i = &part - &parts_[0];
+    return i >= MAX_PARTS || failed_[i].empty() || roomy::plain(failed_[i]) != picture_url(part);
+  }
   bool has_picture(const Line &line) const {
     if (line.across) return false;
     for (int i = line.first; i < line.first + line.count; ++i)
@@ -1050,6 +1074,7 @@ class Drawing {
   Font ring_face_ = Font::BODY;       // the face of the values in those rings, chosen by layout()
   bool strict_rows_ = false;          // while layout() tries larger words: labels and texts beside parts stay whole  // texts whole: beside other parts only where they fit, across in two lines
   Slot slots_[MAX_PARTS];
+  tessera::Text failed_[MAX_PARTS];   // the address of a part's picture that did not come, "" while none failed
   lv_obj_t *head_{}, *note_{};
 };
 
@@ -1072,6 +1097,7 @@ class CardTile : public tessera::Tile {
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }
+  void on_picture(lv_obj_t *place, tessera::PictureState state) override { drawing_.picture_came(place, state); }
   void on_tap() override { tessera::open_card(plugin_->plugin_id(), "detail", roomy::plain(entity_), tile_); }
 
  private:
@@ -1093,6 +1119,7 @@ class DetailCard : public tessera::Card {
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }
+  void on_picture(lv_obj_t *place, tessera::PictureState state) override { drawing_.picture_came(place, state); }
 
  private:
   Drawing drawing_;

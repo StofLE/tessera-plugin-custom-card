@@ -248,8 +248,10 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
   can stand under each other instead.
 - The face of a value is chosen for its shape, not its digits, so the tile keeps its size when a value ticks.
 - An `image` shows its picture on the tile and on the card a tap opens, on a board with the memory for pictures (not
-  the CYD, the Waveshare 3.5-inch or the Hosyond 4-inch); there its mark stands as a value. Tessera's app fetches the
-  picture with its own access, only from Home Assistant, and asks again when the mark changes. Several images on a
+  the CYD, the Waveshare 3.5-inch or the Hosyond 4-inch); there its mark stands as a value. Where its picture does not
+  come (Home Assistant has none at that address, or the download broke off), its mark stands as a value too, until the
+  mark changes. Tessera's app fetches the picture with its own access, only from Home Assistant, and asks again when
+  the mark changes. Several images on a
   card are one picture for the screen, sent again whole when one of them changes.
 - When the sensor is unavailable for a while, the tile keeps it and shows its state until `elements` is back.
 - A plugin tile cannot take a whole page; any other size of the grid is fine.

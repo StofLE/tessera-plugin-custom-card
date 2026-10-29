@@ -253,8 +253,10 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
 - Die Schrift eines Werts richtet sich nach seiner Form, nicht nach den Ziffern, so behält das Tile seine Größe, wenn
   sich ein Wert ändert.
 - Ein `image` zeigt sein Bild auf dem Tile und auf der Karte, die ein Tippen öffnet, auf einem Board mit Speicher für
-  Bilder (nicht CYD, Waveshare 3.5 Zoll und Hosyond 4 Zoll); dort steht seine Marke als Wert. Tesseras App holt das Bild
-  mit ihrem eigenen Zugang, nur von Home Assistant, und fragt erneut, wenn sich die Marke ändert. Mehrere Bilder einer
+  Bilder (nicht CYD, Waveshare 3.5 Zoll und Hosyond 4 Zoll); dort steht seine Marke als Wert. Wo sein Bild nicht kommt
+  (Home Assistant hat unter der Adresse keins, oder der Download brach ab), steht seine Marke ebenfalls als Wert, bis
+  sich die Marke ändert. Tesseras App holt das Bild mit ihrem eigenen Zugang, nur von Home Assistant, und fragt erneut,
+  wenn sich die Marke ändert. Mehrere Bilder einer
   Karte sind für den Screen ein Bild, das ganz neu kommt, wenn sich eines davon ändert.
 - Ist der Sensor eine Weile nicht verfügbar, behält das Tile ihn und zeigt seinen Zustand, bis `elements` wieder da ist.
 - Ein Plugin-Tile kann keine ganze Seite belegen; jede andere Größe des Rasters geht.

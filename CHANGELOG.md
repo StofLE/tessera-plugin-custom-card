@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+- An image whose picture does not come (Home Assistant has none at that address, or the download broke off) shows its
+  mark as a value instead of an empty grey block, until the mark changes or the picture comes after all (plugin API
+  0.17, on_picture). Seen when the service that draws a count was not reachable for a while.
+- Needs the Tessera release after 0.4.90 (plugin API 0.17).
+
 ## 0.7.0 - 2026-10-23
 - A new part, `image`: a picture of Home Assistant's own where a value would stand, such as a count a template drew
   larger than the screen's largest digits, an event's poster or a person's photo:
