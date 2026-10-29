@@ -364,6 +364,7 @@ class Drawing {
   void take(JsonObjectConst data) {
     parts_.clear();
     note_text_.clear();
+    title_.clear();
     if (!titled_) shown_name_.clear();
     else if (!name_.empty()) shown_name_ = name_;
     else shown_name_ = data["name"] | "";
@@ -425,7 +426,8 @@ class Drawing {
     // A tile without a sensor of its own carries the plugin's name (the app's "Custom card"): that heads no card.
     std::string own = roomy::plain(name_);
     if (state.empty() && (own == "Custom card" || own == std::string(plugin_->text("tile_name")))) own.clear();
-    if (titled_) shown_name_ = roomy::text(!own.empty() ? own : alone ? sensors[0].name : joined(common));
+    title_ = roomy::text(!own.empty() ? own : alone ? sensors[0].name : joined(common));
+    if (titled_) shown_name_ = title_;
     const std::string mark = plugin_->text("decimal_mark");
     for (const Sensor &sensor : sensors) {
       if (parts_.size() >= MAX_PARTS) break;
@@ -441,6 +443,9 @@ class Drawing {
       parts_.push_back(part);
     }
   }
+
+  // The simple mode's name for the card a tap opens (the shared words of its sensors), "" for Tessera's own: the tile's.
+  std::string title() const { return roomy::plain(title_); }
 
   // What came of a place's picture (plugin API 0.17): where it stays away (NONE, FAILED) its part shows its mark as a
   // value instead of an empty block, until it comes or its part has another address.
@@ -1212,7 +1217,7 @@ class Drawing {
   bool flat_ = false, titled_ = true, coloured_ = false, pictures_ = false, traffic_ = false;
   int per_row_ = 0;  // the tile's option: values to a row, 0 for the layout's choice
   // Kept in PSRAM (tessera::Text and tessera::List, plugin API 0.10): the memory inside the chip stays Wi-Fi's.
-  tessera::Text name_, shown_name_, note_text_;
+  tessera::Text name_, shown_name_, note_text_, title_;
   tessera::List<Part> parts_;
   Lines fallback_;  // the arrangement of a tile where nothing fits, which `lines` may point to
   mutable bool whole_texts_ = true;
@@ -1256,7 +1261,9 @@ class CardTile : public tessera::Tile {
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }
   void on_picture(lv_obj_t *place, tessera::PictureState state) override { drawing_.picture_came(place, state); }
-  void on_tap() override { tessera::open_card(plugin_->plugin_id(), "detail", roomy::plain(entity_), tile_); }
+  void on_tap() override {
+    tessera::open_card(plugin_->plugin_id(), "detail", roomy::plain(entity_), tile_, drawing_.title());
+  }
 
  private:
   const tessera::Plugin *plugin_;
