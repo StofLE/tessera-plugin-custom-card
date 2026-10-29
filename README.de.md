@@ -11,7 +11,21 @@ Textzeile oder eine Tabellenzeile über die ganze Breite. Werte bekommen die gr�
 Tile die großen Ziffern der Klimakarte; Tabellen- und Textzeilen wachsen ebenfalls mit dem Platz. Ein Tippen öffnet die
 Teile groß auf einer Karte über der Seite, mit ihren Labels.
 
-## Einrichten
+## Schnellstart, ohne Template
+
+1. Öffne in Tessera **Plugins**, wähle **Eigene Karte** und hake deine Bildschirme an. Jeder Bildschirm baut einmal neu.
+2. Platziere im Layout das Tile **Eigene Karte** aus der Gruppe Plugins der Bibliothek und lass seine Entität leer.
+3. Wähle im Inspector unter **Wert 1** bis **Wert 6** bis zu sechs Sensoren. Jeder zeigt seinen Wert, seine Einheit,
+   seinen Namen und sein Icon (sein eigenes aus Home Assistant, sonst eines für seine Art: Temperatur, Feuchte, CO2,
+   Leistung, Akku und mehr). Beginnen die Namen mit denselben Wörtern („Wohnzimmer Temperatur“, „Wohnzimmer Feuchte“),
+   stehen diese über der Karte und die Labels behalten den Rest. **Ampelfarben** färbt CO2, Feuchte und Akkus grün,
+   gelb oder rot.
+
+Andere Sensoren zu wählen braucht keinen neuen Build. Für Ringe, Balken, Tabellen, eigene Farben und Bilder nimm ein
+Template (unten): Ein Tile, dessen Entität ein Template-Sensor mit `elements` ist, zeigt sein Template und lässt die
+sechs Werte weg.
+
+## Einrichten mit Template
 
 1. Lege in Home Assistant einen Template-Sensor an, dessen Attribut `elements` die Teile der Karte aufzählt, einen Text
    je Teil (die Beispiele unten), füge ihn in die `configuration.yaml` ein und lade unter Entwicklerwerkzeuge, YAML die

@@ -1,6 +1,13 @@
 # Changelog
 
 ## 0.8.0
+- A card without a template: pick up to six sensors under Value 1 to Value 6 in the tile's inspector (plugin API
+  0.15). Each shows its value with its unit, its name and its icon, its own or one for its kind of sensor. The words all
+  their names start with head the card, and the labels keep the rest. A number with more than one decimal shows one
+  (none from 100 on), with the screen's decimal mark. The option Traffic lights colours CO2 (up to 1000 ppm green, up to
+  1400 yellow), humidity (40 to 60 % green, 30 to 70 % yellow) and batteries (over 50 % green, over 20 % yellow) and
+  red beyond. Other sensors need no new build. A tile whose entity is a template sensor with `elements` keeps its
+  template and leaves the six values out. The README starts with this quick start.
 - An image whose picture does not come (Home Assistant has none at that address, or the download broke off) shows its
   mark as a value instead of an empty grey block, until the mark changes or the picture comes after all (plugin API
   0.17, on_picture). Seen when the service that draws a count was not reachable for a while.

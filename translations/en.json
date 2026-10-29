@@ -3,10 +3,11 @@
     "name": "English"
   },
   "screen": {
-    "choose": "Choose a sensor",
+    "choose": "Choose sensors",
     "wrong_entity": "Choose a sensor",
     "waiting": "Waiting for Home Assistant",
-    "no_elements": "No part to show"
+    "no_elements": "No part to show",
+    "decimal_mark": "."
   },
   "app": {
     "name": "Custom card",
@@ -22,6 +23,15 @@
     "per_row_hint": "How the values and rings stand: as the tile's room makes them largest, all in one row, or two to a row.",
     "per_row_auto": "Automatic",
     "per_row_all": "All in one row",
-    "per_row_two": "Two to a row"
+    "per_row_two": "Two to a row",
+    "value_1": "Value 1",
+    "value_2": "Value 2",
+    "value_3": "Value 3",
+    "value_4": "Value 4",
+    "value_5": "Value 5",
+    "value_6": "Value 6",
+    "values_hint": "Without a template: pick up to six sensors, each shows its value, unit, name and icon. Left out when the tile's entity is a template sensor with elements.",
+    "traffic_lights": "Traffic lights",
+    "traffic_lights_hint": "Values 1 to 6: CO2, humidity and batteries in green, yellow or red."
   }
 }

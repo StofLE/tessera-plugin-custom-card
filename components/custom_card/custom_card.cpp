@@ -2,6 +2,7 @@
 #include "icons.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -30,6 +31,11 @@ namespace ui = tessera::ui;
 // shows as a value where there are no pictures (a board without the memory for them) and where its picture does not
 // come (plugin API 0.17, on_picture: the app has none at that address, or the download broke off). <fit> is
 // contain (the default: the whole picture, as a number drawn by a template) or cover (a photo that fills its place).
+//
+// Without a template the card shows the sensors chosen in the inspector (plugin API 0.15, the options value_1 to
+// value_6): each one's state and unit as a value, its name as the label (without the words all of them start with, which
+// head the card instead), its own icon or one for its kind of sensor, and with the option traffic_lights the colours of
+// good, fair and poor for carbon dioxide, humidity and a battery.
 //
 // An icon field that starts with "#" is a badge instead, as a line's number in the departures plugin: the words after
 // it in a box of the part's colour (the accent where it has none), e.g. row|4|min|Main station|blue|#16.
@@ -162,6 +168,71 @@ static bool number_of(std::string text, float *out) {
   return true;
 }
 
+// The simple mode's sensors (plugin API 0.15): the tile's options of kind entity, in their order.
+static constexpr const char *VALUE_OPTIONS[] = {"value_1", "value_2", "value_3", "value_4", "value_5", "value_6"};
+
+// An icon for a sensor's kind (its device_class), where Home Assistant names no icon of its own; 0 for none.
+static uint32_t icon_of_class(const std::string &kind) {
+  static const char *const BY_CLASS[][2] = {
+      {"temperature", "thermometer"},   {"humidity", "water-percent"},  {"moisture", "water-percent"},
+      {"carbon_dioxide", "molecule-co2"}, {"power", "flash"},           {"energy", "meter-electric"},
+      {"voltage", "flash"},             {"current", "flash"},           {"battery", "battery-high"},
+      {"illuminance", "weather-sunny"}, {"pressure", "gauge"},          {"atmospheric_pressure", "gauge"},
+      {"gas", "meter-gas"},             {"water", "water"},             {"pm25", "air-purifier"},
+      {"pm10", "air-purifier"},         {"pm1", "air-purifier"},        {"wind_speed", "weather-windy"},
+      {"precipitation", "weather-rainy"}, {"duration", "timer-outline"}, {"timestamp", "clock-outline"},
+  };
+  for (const auto &pair : BY_CLASS)
+    if (kind == pair[0]) return icon_of(pair[1]);
+  return 0;
+}
+
+// Good, fair or poor for a sensor's kind (the option traffic_lights): carbon dioxide up to 1000 ppm good and up to
+// 1400 fair, humidity from 40 to 60 % good and from 30 to 70 % fair, a battery over 50 % good and over 20 % fair.
+// NORMAL for any other kind, and for a state that is no number.
+static Tone traffic_of(const std::string &kind, const std::string &state) {
+  float v;
+  if (!number_of(state, &v)) return Tone::NORMAL;
+  if (kind == "carbon_dioxide") return v <= 1000 ? Tone::GOOD : v <= 1400 ? Tone::BUSY : Tone::ALERT;
+  if (kind == "humidity") return v >= 40 && v <= 60 ? Tone::GOOD : v >= 30 && v <= 70 ? Tone::BUSY : Tone::ALERT;
+  if (kind == "battery") return v > 50 ? Tone::GOOD : v > 20 ? Tone::BUSY : Tone::ALERT;
+  return Tone::NORMAL;
+}
+
+// A sensor's state as a value: a number with more than one decimal to one (none from 100 on), with the screen's decimal
+// mark (`mark`, "," in German); a dash while it has none (unknown, unavailable); words as they are.
+static std::string value_of(const std::string &state, const std::string &mark) {
+  if (state.empty() || state == "unknown" || state == "unavailable") return "–";
+  float v;
+  if (!number_of(state, &v)) return state;
+  std::string text = state;
+  const size_t dot = text.find('.');
+  if (dot != std::string::npos && text.size() - dot - 1 > 1) {
+    char buf[24];
+    snprintf(buf, sizeof buf, std::fabs(v) >= 100 ? "%.0f" : "%.1f", v);
+    text = buf;
+  }
+  if (mark == ",") std::replace(text.begin(), text.end(), '.', ',');
+  return text;
+}
+
+// The words every name of `names` starts with (whole words, and never all of a name), "" where they share none.
+static std::string common_words(const std::vector<std::string> &names) {
+  if (names.size() < 2) return "";
+  std::string common = names[0];
+  for (const std::string &name : names) {
+    size_t n = 0;
+    while (n < common.size() && n < name.size() && common[n] == name[n]) ++n;
+    common.resize(n);
+  }
+  const size_t space = common.rfind(' ');
+  if (space == std::string::npos) return "";
+  common.resize(space);
+  for (const std::string &name : names)
+    if (name.size() <= common.size() + 1 || name[common.size()] != ' ') return "";
+  return trim(common);
+}
+
 static bool parse(const std::string &line, Part *part) {
   const std::vector<std::string> f = fields_of(line);
   auto at = [&](size_t i) { return i < f.size() ? f[i] : std::string(); };
@@ -208,9 +279,11 @@ class Drawing {
   // off). `coloured`: a value takes its part's colour too, not only its mark. `per_row`: how many values stand in a
   // row, 0 for what makes them largest, MAX_IN_ROW for all in one row.
   // `pictures`: images show their pictures (a tile on a board with the memory for them), else their marks as values.
+  // `traffic`: the simple mode's sensors of carbon dioxide, humidity and a battery in the colours of good, fair, poor.
   void create(lv_obj_t *parent, int width, int height, bool flat, const std::string &name, bool titled,
-              bool coloured, int per_row = 0, bool pictures = false) {
+              bool coloured, int per_row = 0, bool pictures = false, bool traffic = false) {
     per_row_ = per_row;
+    traffic_ = traffic;
     pictures_ = pictures;
     width_ = width;
     height_ = height;
@@ -277,20 +350,54 @@ class Drawing {
       note_text_ = plugin_->text(wait == "wrong_entity" ? "wrong_entity" : "waiting");
     } else if (described && parts_.empty()) {
       note_text_ = plugin_->text("no_elements");
-    } else if (!described && state.empty()) {
-      note_text_ = plugin_->text("choose");
     } else if (!described) {
-      // A sensor without `elements`: its own state and unit, as a plain value.
-      Part part;
-      copy_to(part.value, state);
-      copy_to(part.unit, std::string(data["attributes"]["unit_of_measurement"] | ""));
-      parts_.push_back(part);
+      // Without a template: the tile's own sensor (its state and unit) and the sensors chosen in the inspector.
+      simple(data, state);
+      if (parts_.empty()) note_text_ = plugin_->text("choose");
     }
     // A picture that did not come stays a value until its part has another address (a new mark) or it comes after all.
     for (size_t i = 0; i < MAX_PARTS; ++i)
       if (i >= parts_.size() || roomy::plain(failed_[i]) != picture_url(parts_[i])) failed_[i].clear();
     layout();
     paint();
+  }
+
+  // The simple mode (plugin API 0.15): a value for the tile's own sensor, where it has one, and for each sensor chosen
+  // in the inspector, in their order. The name heads the card where the tile has none of its own: the words all the
+  // chosen sensors' names start with ("Living room" of "Living room Temperature" and "Living room Humidity"), and the
+  // labels are what is left of their names.
+  void simple(JsonObjectConst data, const std::string &state) {
+    struct Sensor {
+      std::string state, name;
+      JsonObjectConst attributes;
+    };
+    std::vector<Sensor> sensors;
+    if (!state.empty()) sensors.push_back({state, data["name"] | "", data["attributes"]});
+    JsonObjectConst entities = data["entities"];
+    for (const char *id : VALUE_OPTIONS) {
+      JsonObjectConst entity = entities[id];
+      if (entity.isNull() || entity["wait"].is<const char *>()) continue;
+      sensors.push_back({entity["state"] | "", entity["name"] | "", entity["attributes"]});
+    }
+    std::vector<std::string> names;
+    for (const Sensor &sensor : sensors) names.push_back(sensor.name);
+    // One sensor alone keeps its name over its value, as before the simple mode.
+    const bool alone = sensors.size() == 1;
+    const std::string common = common_words(names);
+    if (titled_ && name_.empty()) shown_name_ = roomy::text(alone ? sensors[0].name : common);
+    const std::string mark = plugin_->text("decimal_mark");
+    for (const Sensor &sensor : sensors) {
+      if (parts_.size() >= MAX_PARTS) break;
+      Part part;
+      const std::string kind = sensor.attributes["device_class"] | "";
+      copy_to(part.value, value_of(sensor.state, mark));
+      copy_to(part.unit, std::string(sensor.attributes["unit_of_measurement"] | ""));
+      if (!alone) copy_to(part.label, common.empty() ? sensor.name : trim(sensor.name.substr(common.size())));
+      part.icon = icon_of(sensor.attributes["icon"] | "");
+      if (!part.icon) part.icon = icon_of_class(kind);
+      if (traffic_) part.tone = traffic_of(kind, sensor.state);
+      parts_.push_back(part);
+    }
   }
 
   // What came of a place's picture (plugin API 0.17): where it stays away (NONE, FAILED) its part shows its mark as a
@@ -1060,7 +1167,7 @@ class Drawing {
 
   const tessera::Plugin *plugin_;
   int width_ = 0, height_ = 0;
-  bool flat_ = false, titled_ = true, coloured_ = false, pictures_ = false;
+  bool flat_ = false, titled_ = true, coloured_ = false, pictures_ = false, traffic_ = false;
   int per_row_ = 0;  // the tile's option: values to a row, 0 for the layout's choice
   // Kept in PSRAM (tessera::Text and tessera::List, plugin API 0.10): the memory inside the chip stays Wi-Fi's.
   tessera::Text name_, shown_name_, note_text_;
@@ -1078,6 +1185,10 @@ class Drawing {
   lv_obj_t *head_{}, *note_{};
 };
 
+// The tiles whose option traffic_lights is on, by their index in the layout (at most 64 tiles), so the card a tap
+// opens colours the same sensors as its tile: a card gets the tile's data, not its options.
+static uint64_t traffic_tiles = 0;
+
 // The tile: its parts on the card's area; a tap opens them large over the page.
 class CardTile : public tessera::Tile {
  public:
@@ -1091,9 +1202,14 @@ class CardTile : public tessera::Tile {
     // Its options (Schumey, pull request #2): the name over the parts, and the values in their parts' colours.
     // And how many values stand in a row: the layout's choice, all in one row, or two.
     const std::string per_row = c.options["per_row"] | "auto";
+    const bool traffic = c.options["traffic_lights"] | false;
+    if (c.tile >= 0 && c.tile < 64) {
+      if (traffic) traffic_tiles |= uint64_t{1} << c.tile;
+      else traffic_tiles &= ~(uint64_t{1} << c.tile);
+    }
     drawing_.create(c.parent, c.width, c.height, c.rows == 1 && c.columns >= 2, c.name ? c.name : "",
                     c.options["show_name"] | true, c.options["coloured_values"] | false,
-                    per_row == "all" ? MAX_IN_ROW : per_row == "two" ? 2 : 0, ui::pictures());
+                    per_row == "all" ? MAX_IN_ROW : per_row == "two" ? 2 : 0, ui::pictures(), traffic);
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }
@@ -1115,7 +1231,8 @@ class DetailCard : public tessera::Card {
 
   void open(const tessera::CardContext &c) override {
     // Its images as pictures too, on a board that shows pictures (plugin API 0.13, pictures on a card).
-    drawing_.create(c.parent, c.width, c.height, false, "", false, false, 0, ui::pictures());
+    const bool traffic = c.tile >= 0 && c.tile < 64 && (traffic_tiles >> c.tile & 1);
+    drawing_.create(c.parent, c.width, c.height, false, "", false, false, 0, ui::pictures(), traffic);
   }
   void on_state(JsonObjectConst data) override { drawing_.take(data); }
   void on_theme() override { drawing_.paint(); }

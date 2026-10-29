@@ -47,6 +47,15 @@ tiles:
           - { value: auto, label: per_row_auto }
           - { value: all, label: per_row_all }
           - { value: two, label: per_row_two }
+      # The simple mode (plugin API 0.15): sensors chosen here, each a value with its unit, name and icon, for a card
+      # without a template. A tile whose own sensor has `elements` shows its template and leaves them out.
+      - { id: value_1, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_1, hint: values_hint }
+      - { id: value_2, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_2 }
+      - { id: value_3, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_3 }
+      - { id: value_4, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_4 }
+      - { id: value_5, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_5 }
+      - { id: value_6, kind: entity, domains: [sensor], attributes: [unit_of_measurement, device_class, icon], label: value_6 }
+      - { id: traffic_lights, kind: toggle, label: traffic_lights, hint: traffic_lights_hint, default: false }
 
 # A tap on the tile opens its parts large over the page, with their labels, and the pictures of its images (plugin
 # API 0.13: pictures on a card, as on the tile).

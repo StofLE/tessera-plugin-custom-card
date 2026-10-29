@@ -3,10 +3,11 @@
     "name": "Deutsch"
   },
   "screen": {
-    "choose": "Sensor wählen",
+    "choose": "Sensoren wählen",
     "wrong_entity": "Sensor wählen",
     "waiting": "Warte auf Home Assistant",
-    "no_elements": "Nichts anzuzeigen"
+    "no_elements": "Nichts anzuzeigen",
+    "decimal_mark": ","
   },
   "app": {
     "name": "Eigene Karte",
@@ -22,6 +23,15 @@
     "per_row_hint": "Wie Werte und Ringe stehen: so, wie sie auf der Kachel am größten werden, alle in einer Reihe oder zu zweit.",
     "per_row_auto": "Automatisch",
     "per_row_all": "Alle in einer Reihe",
-    "per_row_two": "Zwei pro Reihe"
+    "per_row_two": "Zwei pro Reihe",
+    "value_1": "Wert 1",
+    "value_2": "Wert 2",
+    "value_3": "Wert 3",
+    "value_4": "Wert 4",
+    "value_5": "Wert 5",
+    "value_6": "Wert 6",
+    "values_hint": "Ohne Template: bis zu sechs Sensoren wählen, jeder zeigt Wert, Einheit, Namen und Icon. Wird ignoriert, wenn die Entität der Kachel ein Template-Sensor mit elements ist.",
+    "traffic_lights": "Ampelfarben",
+    "traffic_lights_hint": "Werte 1 bis 6: CO2, Feuchte und Akkus in Grün, Gelb oder Rot."
   }
 }
