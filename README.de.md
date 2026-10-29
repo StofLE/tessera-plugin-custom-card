@@ -40,7 +40,7 @@ Kopiere eins, ersetze die Entity-IDs durch deine eigenen und lade die Template-E
 `template:` in der `configuration.yaml`.
 [examples/living_room.yaml](https://github.com/StofLE/tessera-plugin-custom-card/blob/main/examples/living_room.yaml)
 ist ein größeres Beispiel, mit Stufen für Feuchte und CO2. Jedes Bild zeigt sein Beispiel auf einem 7-Zoll-Screen,
-mit ausgedachten Werten.
+mit ausgedachten Werten. Weitere Rezepte stehen im [Wiki](https://github.com/StofLE/tessera-plugin-custom-card/wiki) (auf Englisch).
 
 ### Das Raumklima eines Zimmers
 
@@ -200,7 +200,9 @@ Dieselben Zählungen als Bilder: Ein `image`-Teil steht, wo sonst ein Wert stün
 so sind zwei Zählungen auf einer breiten Kachel (3x2, 4x2) etwa doppelt so hoch wie die größten Ziffern des Screens.
 Das Bild muss jemand zeichnen: Hier holt es ein Template-Image von einem kleinen Dienst im Haus, der eine Zahl zeichnet
 ([examples/value-image](examples/value-image)); jede Bild-Entität geht genauso. Die Zählung ist die Marke des Teils:
-Ändert sie sich, ist die Adresse des Bildes neu, und wo es keine Bilder gibt, steht sie als Wert.
+Ändert sie sich, ist die Adresse des Bildes neu, und wo es keine Bilder gibt, steht sie als Wert. Läuft bei dir die
+AppDaemon-App in Home Assistant? Das [Wiki](https://github.com/StofLE/tessera-plugin-custom-card/wiki/Numbers-as-pictures-with-AppDaemon) hat ein Rezept, das die Zahlen
+dort zeichnet, ohne eigene Maschine (auf Englisch).
 
 ![Zwei Zählungen als Bilder auf einer 4x2-Kachel](docs/examples/counts-image.png)
 

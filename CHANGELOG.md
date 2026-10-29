@@ -9,6 +9,7 @@
   1400 yellow), humidity (40 to 60 % green, 30 to 70 % yellow) and batteries (over 50 % green, over 20 % yellow) and
   red beyond. Other sensors need no new build. A tile whose entity is a template sensor with `elements` keeps its
   template and leaves the six values out. The README starts with this quick start.
+- The README points to the wiki's recipes, among them numbers as pictures drawn by AppDaemon.
 - An image whose picture does not come (Home Assistant has none at that address, or the download broke off) shows its
   mark as a value instead of an empty grey block, until the mark changes or the picture comes after all (plugin API
   0.17, on_picture). Seen when the service that draws a count was not reachable for a while.

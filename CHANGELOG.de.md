@@ -10,6 +10,7 @@
   über 20 % gelb), darüber hinaus rot. Andere Sensoren brauchen keinen neuen Build. Ein Tile, dessen Entität ein
   Template-Sensor mit `elements` ist, behält sein Template und lässt die sechs Werte weg. Die README beginnt mit diesem
   Schnellstart.
+- Die README verweist auf die Rezepte im Wiki, darunter Zahlen als Bilder, gezeichnet von AppDaemon.
 - Ein Bild, das nicht kommt (Home Assistant hat unter der Adresse keins, oder der Download brach ab), zeigt seine Marke
   als Wert statt eines leeren grauen Blocks, bis sich die Marke ändert oder das Bild doch noch kommt (Plugin-API 0.17,
   on_picture). Gesehen, als der Dienst, der eine Zählung zeichnet, eine Weile nicht erreichbar war.

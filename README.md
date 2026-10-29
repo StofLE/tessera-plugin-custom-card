@@ -35,7 +35,7 @@ Copy one, change the entity ids to your own, and reload Template entities. Each 
 `configuration.yaml`.
 [examples/living_room.yaml](https://github.com/StofLE/tessera-plugin-custom-card/blob/main/examples/living_room.yaml)
 is a larger one, with levels for the humidity and the CO2. Each picture shows its example on a 7-inch screen, with
-made-up values.
+made-up values. More recipes are in the [wiki](https://github.com/StofLE/tessera-plugin-custom-card/wiki).
 
 ### A room's climate
 
@@ -195,7 +195,9 @@ The same counts as pictures: an `image` part stands where a value would and grow
 wide tile (3x2, 4x2) two counts are about twice as tall as the screen's largest digits. Something has to draw the
 picture: here a template image fetches it from a small service in the house that draws a number
 ([examples/value-image](examples/value-image)); any image entity works the same way. The count is the part's mark: it
-makes the address new when it changes, and it stands as a value where there are no pictures.
+makes the address new when it changes, and it stands as a value where there are no pictures. Running the AppDaemon
+app in Home Assistant? The [wiki](https://github.com/StofLE/tessera-plugin-custom-card/wiki/Numbers-as-pictures-with-AppDaemon) has a recipe that draws the numbers there,
+with no extra machine.
 
 ![Two counts drawn as pictures on a 4x2 tile](docs/examples/counts-image.png)
 
