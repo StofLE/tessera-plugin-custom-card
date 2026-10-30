@@ -1,20 +1,19 @@
 # Änderungen
 
-## 0.8.0
+## 0.8.0 - 2026-10-30
 - Eine Karte ohne Template: Wähle im Inspector der Kachel unter Wert 1 bis Wert 6 bis zu sechs Sensoren (Plugin-API
   0.15). Jeder zeigt seinen Wert mit Einheit, seinen Namen und sein Icon, sein eigenes oder eines für seine Art von
   Sensor (seine Geräteklasse, bei einem Sensor ohne sie seine Einheit, ppm als CO2). Die Wörter, die in allen Namen
-  stehen, stehen über der Karte, egal an welcher Stelle, die Labels behalten den Rest. Eine Zahl mit
-  mehr als einer Nachkommastelle zeigt eine (ab 100 keine), mit dem Dezimalzeichen des Screens. Die Option Ampelfarben
-  färbt CO2 (bis 1000 ppm grün, bis 1400 gelb), Feuchte (40 bis 60 % grün, 30 bis 70 % gelb) und Akkus (über 50 % grün,
-  über 20 % gelb), darüber hinaus rot. Andere Sensoren brauchen keinen neuen Build. Ein Tile, dessen Entität ein
-  Template-Sensor mit `elements` ist, behält sein Template und lässt die sechs Werte weg. Die README beginnt mit diesem
-  Schnellstart.
+  stehen, stehen über der Karte, egal an welcher Stelle, die Labels behalten den Rest. Eine Zahl mit mehr als einer
+  Nachkommastelle zeigt eine (ab 100 keine), mit dem Dezimalzeichen des Screens. Die Option Ampelfarben färbt CO2 (bis
+  1000 ppm grün, bis 1400 gelb), Feuchte (40 bis 60 % grün, 30 bis 70 % gelb) und Akkus (über 50 % grün, über 20 %
+  gelb), darüber hinaus rot. Andere Sensoren brauchen keinen neuen Build. Ein Tile, dessen Entität ein Template-Sensor
+  mit `elements` ist, behält sein Template und lässt die sechs Werte weg. Die README beginnt mit diesem Schnellstart.
 - Die README verweist auf die Rezepte im Wiki, darunter Zahlen als Bilder, gezeichnet von AppDaemon.
 - Ein Bild, das nicht kommt (Home Assistant hat unter der Adresse keins, oder der Download brach ab), zeigt seine Marke
   als Wert statt eines leeren grauen Blocks, bis sich die Marke ändert oder das Bild doch noch kommt (Plugin-API 0.17,
   on_picture). Gesehen, als der Dienst, der eine Zählung zeichnet, eine Weile nicht erreichbar war.
-- Braucht das Tessera-Release nach 0.4.90 (Plugin-API 0.17).
+- Braucht Tessera 0.4.91 oder neuer (Plugin-API 0.17).
 
 ## 0.7.0 - 2026-10-23
 - Ein neuer Teil, `image`: ein Bild von Home Assistant, wo sonst ein Wert stünde, etwa eine Zählung, die ein Template
