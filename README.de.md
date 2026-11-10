@@ -276,7 +276,8 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
   Karte sind für den Screen ein Bild, das ganz neu kommt, wenn sich eines davon ändert.
 - Ist der Sensor eine Weile nicht verfügbar, behält das Tile ihn und zeigt seinen Zustand, bis `elements` wieder da ist.
 - Das Tile nimmt jede Größe bis 4 x 4, und die ganze Seite mit dem Schalter **Ganze Seite** im Inspector (Tessera
-  0.4.98 oder neuer).
+  0.4.98 oder neuer). Ein Tippen auf eine Karte über die ganze Seite öffnet nichts, denn die Karte, die ein Tippen
+  öffnet, wäre kleiner.
 - Die Hintergrundfarbe des Tiles stellst du im Editor ein, wie bei jedem Tile. Sein Inspector hat drei eigene
   Optionen: **Namen zeigen** (an) für den Namen über den Teilen (aus gibt den Teilen seinen Platz), **Werte in ihrer
   Farbe** (aus), um auch jede Zahl in der Farbe ihres Teils zu zeigen, hell und dunkel lesbar, und **Werte in einer

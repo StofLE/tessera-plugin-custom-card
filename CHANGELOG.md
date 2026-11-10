@@ -2,7 +2,7 @@
 
 ## 0.9.0
 - A card can take the whole page: the inspector's Whole page switch (plugin API 0.25, Tessera 0.4.98). A page of
-  large numbers, such as a count at the door, needs no grid of tiles.
+  large numbers, such as a count at the door, needs no grid of tiles. A tap on it opens nothing: the card a tap opens would be smaller.
 
 ## 0.8.0 - 2026-10-30
 - A card without a template: pick up to six sensors under Value 1 to Value 6 in the tile's inspector (plugin API

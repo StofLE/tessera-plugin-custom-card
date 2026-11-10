@@ -1244,6 +1244,8 @@ class CardTile : public tessera::Tile {
   void create(const tessera::TileContext &c) override {
     entity_ = c.entity ? c.entity : "";
     tile_ = c.tile;
+    // A tile of the whole page (plugin API 0.25) is already larger than the card a tap would open.
+    full_ = c.full;
     // A tile one row high and two columns or more puts its parts side by side, as the departures plugin turns into a
     // list on two columns.
     // Its options (Schumey, pull request #2): the name over the parts, and the values in their parts' colours.
@@ -1262,6 +1264,7 @@ class CardTile : public tessera::Tile {
   void on_theme() override { drawing_.paint(); }
   void on_picture(lv_obj_t *place, tessera::PictureState state) override { drawing_.picture_came(place, state); }
   void on_tap() override {
+    if (full_) return;
     tessera::open_card(plugin_->plugin_id(), "detail", roomy::plain(entity_), tile_, drawing_.title());
   }
 
@@ -1270,6 +1273,7 @@ class CardTile : public tessera::Tile {
   Drawing drawing_;
   tessera::Text entity_;
   int tile_ = -1;
+  bool full_ = false;
 };
 
 // The card a tap on the tile opens: the same parts, as large as a card's room takes, with their labels where they fit.
