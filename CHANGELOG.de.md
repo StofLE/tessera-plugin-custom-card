@@ -1,5 +1,9 @@
 # Änderungen
 
+## 0.9.0
+- Eine Karte kann die ganze Seite belegen: der Schalter Ganze Seite im Inspector (Plugin-API 0.25, Tessera 0.4.98).
+  Eine Seite großer Zahlen, etwa eine Zählung an der Tür, braucht kein Raster aus Tiles.
+
 ## 0.8.0 - 2026-10-30
 - Eine Karte ohne Template: Wähle im Inspector der Kachel unter Wert 1 bis Wert 6 bis zu sechs Sensoren (Plugin-API
   0.15). Jeder zeigt seinen Wert mit Einheit, seinen Namen und sein Icon, sein eigenes oder eines für seine Art von

@@ -268,7 +268,8 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
   the mark changes. Several images on a
   card are one picture for the screen, sent again whole when one of them changes.
 - When the sensor is unavailable for a while, the tile keeps it and shows its state until `elements` is back.
-- A plugin tile cannot take a whole page; any other size of the grid is fine.
+- The tile takes any size up to 4 x 4, and the whole page with the inspector's **Whole page** switch (Tessera 0.4.98
+  or newer).
 - The tile's background colour is set in the editor, as for every tile. Its inspector has three options of its own:
   **Show the name** (on) for the tile's name over the parts (off gives the parts its room), **Values in their
   colour** (off) to paint each number in its part's colour as well, readable in light and dark, and **Values in a row**
