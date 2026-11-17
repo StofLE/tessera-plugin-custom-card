@@ -72,9 +72,10 @@ static float contrast(uint32_t a, uint32_t b) {
 }
 
 // A part's colour as its icon: Tessera's own tile icon colour, and darker still where it would not read on the card
-// (a yellow on white): Tessera's icons sit on a pale disc of their colour, these stand on the card itself.
+// (a yellow on white): Tessera's icons sit on a pale disc of their colour, these stand on the card itself. The card as
+// it is drawn now (plugin API 0.26): a tile's in its traffic light colour, else the plain one.
 static uint32_t readable(uint32_t colour) {
-  const uint32_t card = theme::hex(theme::CARD);
+  const uint32_t card = lv_color_to_u32(ui::card_color());  // 0xFFRRGGBB: contrast() ignores the alpha byte
   for (int i = 0; i < 8 && contrast(colour, card) < 3.0f; ++i) colour = theme::mix(colour, theme::hex(theme::INK), 205);
   return colour;
 }
@@ -397,9 +398,25 @@ class Drawing {
     // A picture that did not come stays a value until its part has another address (a new mark) or it comes after all.
     for (size_t i = 0; i < MAX_PARTS; ++i)
       if (i >= parts_.size() || roomy::plain(failed_[i]) != picture_url(parts_[i])) failed_[i].clear();
+    // A tile in traffic lights (plugin API 0.26): its whole card yellow or red while one of Values 1 to 6 is fair or
+    // poor, plain while all are good, so the card speaks up only when something wants doing. A template's colours stay
+    // its parts' own. The card a tap opens keeps Tessera's plain card.
+    if (tile_) {
+      Tone worst = Tone::NORMAL;
+      for (const Part &part : parts_)
+        if (part.tone == Tone::ALERT || (part.tone == Tone::BUSY && worst != Tone::ALERT)) worst = part.tone;
+      const bool lights = traffic_ && !described;  // the simple mode's sensors only, as the option says
+      tinted_ = lights && worst != Tone::NORMAL;
+      ui::set_card_color(!lights ? tessera::CardColor::NONE
+                         : worst == Tone::ALERT ? tessera::CardColor::RED
+                         : worst == Tone::BUSY ? tessera::CardColor::YELLOW : tessera::CardColor::NONE);
+    }
     layout();
     paint();
   }
+
+  // Whether this drawing is a tile's, whose card it may colour (a card a tap opens has Tessera's own).
+  void on_tile() { tile_ = true; }
 
   // The simple mode (plugin API 0.15): a value for the tile's own sensor, where it has one, and for each sensor chosen
   // in the inspector, in their order. The name heads the card where the tile has none of its own: the words all the
@@ -475,7 +492,9 @@ class Drawing {
       ui::set_color(s.label, theme::MUTED);
       ui::set_color(s.unit, theme::MUTED);
       ui::set_color(s.value, theme::INK);
-      lv_obj_set_style_bg_color(s.track, ui::color(theme::TRACK), 0);
+      // A track on a card in a colour of its own: the ink softly over that colour, as plugin_api.h asks.
+      const lv_color_t track = tinted_ ? lv_color_mix(ui::color(theme::INK), ui::card_color(), 26) : ui::color(theme::TRACK);
+      lv_obj_set_style_bg_color(s.track, track, 0);
       if (tone != Tone::NORMAL) {
         // The tone's colour; on the icon darker still where it would not read on the card (BUSY's amber on white).
         const uint32_t toned = lv_color_to_u32(ui::tone_color(tone, theme::MUTED));  // 0xFFRRGGBB: the alpha byte is ignored
@@ -495,7 +514,7 @@ class Drawing {
       // A ring: its arc on the track in the part's colour (the accent without one).
       const uint32_t mark = tone != Tone::NORMAL ? lv_color_to_u32(ui::tone_color(tone, theme::ACCENT))  // alpha ignored
                             : own ? own : theme::hex(theme::ACCENT);
-      lv_obj_set_style_arc_color(s.arc, ui::color(theme::TRACK), LV_PART_MAIN);
+      lv_obj_set_style_arc_color(s.arc, track, LV_PART_MAIN);
       lv_obj_set_style_arc_color(s.arc, theme::rgb(mark), LV_PART_INDICATOR);
       if (i < parts_.size() && parts_[i].badge[0]) {
         // A badge: its box in the part's colour or the accent, its words in whichever of the look's own colours
@@ -1215,6 +1234,7 @@ class Drawing {
   const tessera::Plugin *plugin_;
   int width_ = 0, height_ = 0;
   bool flat_ = false, titled_ = true, coloured_ = false, pictures_ = false, traffic_ = false;
+  bool tile_ = false, tinted_ = false;  // a tile's drawing; its card in a traffic light colour now
   int per_row_ = 0;  // the tile's option: values to a row, 0 for the layout's choice
   // Kept in PSRAM (tessera::Text and tessera::List, plugin API 0.10): the memory inside the chip stays Wi-Fi's.
   tessera::Text name_, shown_name_, note_text_, title_;
@@ -1242,6 +1262,7 @@ class CardTile : public tessera::Tile {
   explicit CardTile(const tessera::Plugin *plugin) : plugin_(plugin), drawing_(plugin) {}
 
   void create(const tessera::TileContext &c) override {
+    drawing_.on_tile();
     entity_ = c.entity ? c.entity : "";
     tile_ = c.tile;
     // A tile of the whole page (plugin API 0.25) is already larger than the card a tap would open.

@@ -19,7 +19,8 @@ Teile groß auf einer Karte über der Seite, mit ihren Labels.
    seinen Namen und sein Icon (sein eigenes aus Home Assistant, sonst eines für seine Art: Temperatur, Feuchte, CO2,
    Leistung, Akku und mehr, auch an der Einheit erkannt). Ein Wort, das in allen Namen steht („Wohnzimmer“ in
    „Temperatur Wohnzimmer“ und „Wohnzimmer CO2“), steht über der Karte, und die Labels behalten den Rest. **Ampelfarben** färbt CO2, Feuchte und Akkus grün,
-   gelb oder rot.
+   gelb oder rot, und die ganze Karte wird gelb oder rot, solange einer davon nicht passt (solange alle passen, bleibt sie
+   schlicht).
 
 Andere Sensoren zu wählen braucht keinen neuen Build. Für Ringe, Balken, Tabellen, eigene Farben und Bilder nimm ein
 Template (unten): Ein Tile, dessen Entität ein Template-Sensor mit `elements` ist, zeigt sein Template und lässt die
@@ -277,7 +278,8 @@ und bei einem Balken oder Ring sein kleinster und größter Wert. Felder am Ende
 - Ist der Sensor eine Weile nicht verfügbar, behält das Tile ihn und zeigt seinen Zustand, bis `elements` wieder da ist.
 - Das Tile nimmt jede Größe bis 4 x 4, und die ganze Seite mit dem Schalter **Ganze Seite** im Inspector (Tessera
   0.4.98 oder neuer). Ein Tippen auf eine Karte über die ganze Seite öffnet nichts, denn die Karte, die ein Tippen
-  öffnet, wäre kleiner.
+  öffnet, wäre kleiner. Zahlen wachsen nur bis zu den größten Ziffern des Screens, so lohnt sich die ganze Seite vor
+  allem für Bilder (eine Zählung als Bild) oder viele Teile.
 - Die Hintergrundfarbe des Tiles stellst du im Editor ein, wie bei jedem Tile. Sein Inspector hat drei eigene
   Optionen: **Namen zeigen** (an) für den Namen über den Teilen (aus gibt den Teilen seinen Platz), **Werte in ihrer
   Farbe** (aus), um auch jede Zahl in der Farbe ihres Teils zu zeigen, hell und dunkel lesbar, und **Werte in einer

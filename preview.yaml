@@ -2,7 +2,8 @@
 # colours and a bar, a computer's load as three rings (without its name, the values in their colours), two counts with a share, a card whose value is a word,
 # eight rooms in two rows of four, eight rooms as a table,
 # four climate values on a wide tile (two rows of two), and two counts as pictures (image parts, the pictures from the
-# files under pictures:). Never put a secret here.
+# files under pictures:), and an office in traffic lights (the whole card yellow while its CO2 is fair). Never put a
+# secret here.
 tiles:
   - tile: card
     name: Computer
@@ -13,6 +14,11 @@ tiles:
     name: Living room
     entity: sensor.living_room_card
     sizes: [4x2, 2x2, 2x1]
+  - tile: card
+    name: Office
+    entity: sensor.office_co2
+    options: { value_1: sensor.office_humidity, traffic_lights: true }
+    sizes: [2x1, 2x2]
   - tile: card
     name: Entrance
     entity: sensor.entrance_card
@@ -40,6 +46,12 @@ tiles:
     sizes: [2x2, 3x2, 4x2, 2x1]
 
 states:
+  sensor.office_co2:
+    state: "1240"
+    attributes: { unit_of_measurement: ppm, device_class: carbon_dioxide, friendly_name: Office CO2 }
+  sensor.office_humidity:
+    state: "48"
+    attributes: { unit_of_measurement: "%", device_class: humidity, friendly_name: Office Humidity }
   sensor.climate_card:
     state: "9.7"
     attributes:

@@ -16,7 +16,7 @@ room as well. A tap opens the parts large on a card over the page, with their la
 3. Pick up to six sensors under **Value 1** to **Value 6** in its inspector. Each shows its value, its unit, its name
    and its icon (its own from Home Assistant, else one for its kind or its unit: temperature, humidity, CO2, power, a
    battery and more). A word all the names share ("Living room" of "Living room Temperature" and "Humidity living
-   room") heads the card, and the labels keep the rest. **Traffic lights** colours CO2, humidity and batteries green, yellow or red.
+   room") heads the card, and the labels keep the rest. **Traffic lights** colours CO2, humidity and batteries green, yellow or red, and the whole card turns yellow or red while one of them is off (it stays plain while all are fine).
 
 Choosing other sensors needs no new build. For rings, bars, tables, colours of your own and pictures, use a template
 (below): a tile whose entity is a template sensor with `elements` shows its template and leaves the six values out.
@@ -269,7 +269,9 @@ a ring its lowest and highest value. Fields at the end may be left out; a field 
   card are one picture for the screen, sent again whole when one of them changes.
 - When the sensor is unavailable for a while, the tile keeps it and shows its state until `elements` is back.
 - The tile takes any size up to 4 x 4, and the whole page with the inspector's **Whole page** switch (Tessera 0.4.98
-  or newer). A tap on a card of the whole page opens nothing, since the card a tap opens would be smaller.
+  or newer). A tap on a card of the whole page opens nothing, since the card a tap opens would be smaller. Numbers grow
+  only up to the screen's largest digits, so the whole page pays most for images (a count drawn as a picture) or many
+  parts.
 - The tile's background colour is set in the editor, as for every tile. Its inspector has three options of its own:
   **Show the name** (on) for the tile's name over the parts (off gives the parts its room), **Values in their
   colour** (off) to paint each number in its part's colour as well, readable in light and dark, and **Values in a row**

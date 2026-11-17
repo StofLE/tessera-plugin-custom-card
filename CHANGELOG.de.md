@@ -3,6 +3,10 @@
 ## 0.9.0
 - Eine Karte kann die ganze Seite belegen: der Schalter Ganze Seite im Inspector (Plugin-API 0.25, Tessera 0.4.98).
   Eine Seite großer Zahlen, etwa eine Zählung an der Tür, braucht kein Raster aus Tiles. Ein Tippen darauf öffnet nichts: die Karte, die ein Tippen öffnet, wäre kleiner.
+- Ampelfarben färben die ganze Karte: gelb oder rot, solange einer der Werte 1 bis 6 mittel oder schlecht ist, schlicht,
+  solange alle passen (Plugin-API 0.26, set_card_color). Balken und Ringe behalten auf der farbigen Karte eine lesbare
+  Spur.
+- Braucht Tessera 0.4.98.
 
 ## 0.8.0 - 2026-10-30
 - Eine Karte ohne Template: Wähle im Inspector der Kachel unter Wert 1 bis Wert 6 bis zu sechs Sensoren (Plugin-API

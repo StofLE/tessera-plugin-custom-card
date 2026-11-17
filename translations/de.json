@@ -33,6 +33,6 @@
     "value_6": "Wert 6",
     "values_hint": "Ohne Template: bis zu sechs Sensoren wählen, jeder zeigt Wert, Einheit, Namen und Icon. Wird ignoriert, wenn die Entität der Kachel ein Template-Sensor mit elements ist.",
     "traffic_lights": "Ampelfarben",
-    "traffic_lights_hint": "Werte 1 bis 6: CO2, Feuchte und Akkus in Grün, Gelb oder Rot."
+    "traffic_lights_hint": "Werte 1 bis 6: CO2, Feuchte und Akkus in Grün, Gelb oder Rot, und die ganze Karte gelb oder rot, solange einer nicht passt."
   }
 }
