@@ -1,6 +1,6 @@
 # Änderungen
 
-## 0.9.0
+## 0.9.0 - 2026-11-18
 - Eine Karte kann die ganze Seite belegen: der Schalter Ganze Seite im Inspector (Plugin-API 0.25, Tessera 0.4.98).
   Eine Seite großer Zahlen, etwa eine Zählung an der Tür, braucht kein Raster aus Tiles. Ein Tippen darauf öffnet nichts: die Karte, die ein Tippen öffnet, wäre kleiner.
 - Ampelfarben färben die ganze Karte: gelb oder rot, solange einer der Werte 1 bis 6 mittel oder schlecht ist, schlicht,

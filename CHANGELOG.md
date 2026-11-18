@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0
+## 0.9.0 - 2026-11-18
 - A card can take the whole page: the inspector's Whole page switch (plugin API 0.25, Tessera 0.4.98). A page of
   large numbers, such as a count at the door, needs no grid of tiles. A tap on it opens nothing: the card a tap opens would be smaller.
 - Traffic lights colour the whole card: yellow or red while one of Values 1 to 6 is fair or poor, plain while all are
