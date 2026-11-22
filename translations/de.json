@@ -12,7 +12,7 @@
   },
   "app": {
     "name": "Eigene Karte",
-    "summary": "Eine Karte aus Werten, Ringen, Balken, Tabellen und Text, die ein Template-Sensor in Home Assistant beschreibt.",
+    "summary": "Die Werte deiner Sensoren auf einer Karte, im Inspector gewählt, oder Werte, Ringe, Balken, Tabellen und Text, die ein Template-Sensor beschreibt.",
     "tile_name": "Eigene Karte",
     "tile_example": "21,4 °C, 48 %, CO2 820 ppm",
     "card_name": "Eigene Karte, groß",
@@ -31,7 +31,7 @@
     "value_4": "Wert 4",
     "value_5": "Wert 5",
     "value_6": "Wert 6",
-    "values_hint": "Ohne Template: bis zu sechs Sensoren wählen, jeder zeigt Wert, Einheit, Namen und Icon. Wird ignoriert, wenn die Entität der Kachel ein Template-Sensor mit elements ist.",
+    "values_hint": "Ohne Template: Entität oben leer lassen (sie listet nur Template-Sensoren) und hier bis zu sechs Sensoren wählen, jeder zeigt Wert, Einheit, Namen und Icon. Wird ignoriert, wenn die Entität der Kachel ein Template-Sensor mit elements ist.",
     "traffic_lights": "Ampelfarben",
     "traffic_lights_hint": "Werte 1 bis 6: CO2, Feuchte und Akkus in Grün, Gelb oder Rot, und die ganze Karte gelb oder rot, solange einer nicht passt."
   }

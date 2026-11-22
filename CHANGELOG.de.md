@@ -1,5 +1,10 @@
 # Änderungen
 
+## 0.9.1 - 2026-11-22
+- Der Inspector sagt es bei Wert 1: Für eine Karte ohne Template bleibt Entität leer. Ihre Liste bietet nur
+  Template-Sensoren an, ohne einen bleibt sie also leer, und das sah aus wie eine Liste, die nicht aufgeht (#8).
+- Die Plugins-Seite nennt die einfache Karte zuerst: die Werte deiner Sensoren, im Inspector gewählt.
+
 ## 0.9.0 - 2026-11-18
 - Eine Karte kann die ganze Seite belegen: der Schalter Ganze Seite im Inspector (Plugin-API 0.25, Tessera 0.4.98).
   Eine Seite großer Zahlen, etwa eine Zählung an der Tür, braucht kein Raster aus Tiles. Ein Tippen darauf öffnet nichts: die Karte, die ein Tippen öffnet, wäre kleiner.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.1 - 2026-11-22
+- The inspector says it at Value 1: leave Entity empty for a card without a template. Its list offers only template
+  sensors, so without one it stays empty, which looked like a list that does not open (#8).
+- The Plugins page names the simple card first: your sensors' values, picked in the inspector.
+
 ## 0.9.0 - 2026-11-18
 - A card can take the whole page: the inspector's Whole page switch (plugin API 0.25, Tessera 0.4.98). A page of
   large numbers, such as a count at the door, needs no grid of tiles. A tap on it opens nothing: the card a tap opens would be smaller.

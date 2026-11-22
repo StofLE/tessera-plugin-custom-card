@@ -1,7 +1,7 @@
 # Eigene Karte
 
-Ein Tile, das du selbst zusammenstellst: Werte, Ringe, Balken, Textzeilen und Tabellen, die ein Template-Sensor in Home
-Assistant beschreibt, gezeichnet vom Bildschirm in seinen eigenen Schriften und Farben. Das Raumklima eines Zimmers auf
+Ein Tile, das du selbst zusammenstellst: die Werte von bis zu sechs Sensoren, die du im Inspector wählst, oder Werte,
+Ringe, Balken, Textzeilen und Tabellen, die ein Template-Sensor in Home Assistant beschreibt, gezeichnet vom Bildschirm in seinen eigenen Schriften und Farben. Das Raumklima eines Zimmers auf
 einem Tile, eine Liste der Räume, die Akkus, die schwach werden, die nächsten Abfahrten an deiner Haltestelle: alles,
 was ein Template sagen kann.
 
@@ -14,7 +14,8 @@ Teile groß auf einer Karte über der Seite, mit ihren Labels.
 ## Schnellstart, ohne Template
 
 1. Öffne in Tessera **Plugins**, wähle **Eigene Karte** und hake deine Bildschirme an. Jeder Bildschirm baut einmal neu.
-2. Platziere im Layout das Tile **Eigene Karte** aus der Gruppe Plugins der Bibliothek und lass seine Entität leer.
+2. Platziere im Layout das Tile **Eigene Karte** aus der Gruppe Plugins der Bibliothek und lass seine **Entität** leer.
+   Diese Liste bietet nur Template-Sensoren mit `elements` an (unten), ohne Template bleibt sie also leer, und das passt so.
 3. Wähle im Inspector unter **Wert 1** bis **Wert 6** bis zu sechs Sensoren. Jeder zeigt seinen Wert, seine Einheit,
    seinen Namen und sein Icon (sein eigenes aus Home Assistant, sonst eines für seine Art: Temperatur, Feuchte, CO2,
    Leistung, Akku und mehr, auch an der Einheit erkannt). Ein Wort, das in allen Namen steht („Wohnzimmer“ in

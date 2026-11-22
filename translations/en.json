@@ -12,7 +12,7 @@
   },
   "app": {
     "name": "Custom card",
-    "summary": "A card of values, rings, bars, tables and words that a template sensor in Home Assistant describes.",
+    "summary": "Your sensors' values on one card, picked in the inspector, or values, rings, bars, tables and words that a template sensor describes.",
     "tile_name": "Custom card",
     "tile_example": "21.4 °C, 48 %, CO2 820 ppm",
     "card_name": "Custom card, large",
@@ -31,7 +31,7 @@
     "value_4": "Value 4",
     "value_5": "Value 5",
     "value_6": "Value 6",
-    "values_hint": "Without a template: pick up to six sensors, each shows its value, unit, name and icon. Left out when the tile's entity is a template sensor with elements.",
+    "values_hint": "Without a template: leave Entity above empty (it lists only template sensors) and pick up to six sensors here, each shows its value, unit, name and icon. Left out when the tile's entity is a template sensor with elements.",
     "traffic_lights": "Traffic lights",
     "traffic_lights_hint": "Values 1 to 6: CO2, humidity and batteries in green, yellow or red, and the whole card yellow or red while one is off."
   }

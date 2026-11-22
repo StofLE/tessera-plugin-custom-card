@@ -1,7 +1,7 @@
 # Custom card
 
-A tile you put together yourself: values, rings, bars, lines of words and tables that a template sensor in Home
-Assistant describes, drawn by the screen in its own fonts and colours. A room's climate on one tile, a list of rooms,
+A tile you put together yourself: the values of up to six sensors you pick in the inspector, or values, rings, bars,
+lines of words and tables that a template sensor in Home Assistant describes, drawn by the screen in its own fonts and colours. A room's climate on one tile, a list of rooms,
 the batteries that run low, the next departures from your stop: whatever a template can say.
 
 The card lays itself out for the tile it stands on. On a tile one row high and two columns or more the parts stand side
@@ -12,7 +12,8 @@ room as well. A tap opens the parts large on a card over the page, with their la
 ## Quick start, without a template
 
 1. In Tessera, open **Plugins**, choose **Custom card** and tick your screens. Each screen builds once.
-2. In Layout, place the **Custom card** tile from the library's Plugins group and leave its entity empty.
+2. In Layout, place the **Custom card** tile from the library's Plugins group and leave its **Entity** empty. That list
+   offers only template sensors with `elements` (below), so without a template it stays empty, and that is fine.
 3. Pick up to six sensors under **Value 1** to **Value 6** in its inspector. Each shows its value, its unit, its name
    and its icon (its own from Home Assistant, else one for its kind or its unit: temperature, humidity, CO2, power, a
    battery and more). A word all the names share ("Living room" of "Living room Temperature" and "Humidity living
